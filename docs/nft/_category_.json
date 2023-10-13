@@ -1,0 +1,8 @@
+{
+  "label": "Tutorial - NFT",
+  "position": 2,
+  "link": {
+    "type": "generated-index",
+    "description": "5 minutes to write your own jetton contract"
+  }
+}
