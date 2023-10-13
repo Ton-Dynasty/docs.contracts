@@ -1,1 +1,0 @@
-"use strict";(self.webpackChunkdocs_contracts=self.webpackChunkdocs_contracts||[]).push([[862],{3569:t=>{t.exports=JSON.parse('{"label":"jetton","permalink":"/eventon-doc/blog/tags/jetton","allTagsPath":"/eventon-doc/blog/tags","count":1}')}}]);

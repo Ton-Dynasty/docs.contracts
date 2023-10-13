@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkdocs_contracts=self.webpackChunkdocs_contracts||[]).push([[261],{5351:s=>{s.exports=JSON.parse('{"label":"royalty","permalink":"/docs.contracts/blog/tags/royalty","allTagsPath":"/docs.contracts/blog/tags","count":1}')}}]);
