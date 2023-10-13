@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkdocs_contracts=self.webpackChunkdocs_contracts||[]).push([[920],{8486:t=>{t.exports=JSON.parse('{"label":"royalty","permalink":"/eventon-doc/blog/tags/royalty","allTagsPath":"/eventon-doc/blog/tags","count":1}')}}]);

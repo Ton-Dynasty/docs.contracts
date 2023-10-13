@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkdocs_contracts=self.webpackChunkdocs_contracts||[]).push([[535],{5641:e=>{e.exports=JSON.parse('{"title":"Recent posts","items":[{"title":"NFT Enforced Royalty","permalink":"/eventon-doc/blog/nft-enforced-royalty"}]}')}}]);

@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkdocs_contracts=self.webpackChunkdocs_contracts||[]).push([[155],{7484:a=>{a.exports=JSON.parse('{"label":"fractionalize","permalink":"/eventon-doc/blog/tags/fractionalize","allTagsPath":"/eventon-doc/blog/tags","count":1}')}}]);
