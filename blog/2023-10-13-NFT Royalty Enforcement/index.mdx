@@ -17,7 +17,7 @@ Click **readmore** to learn more about our project.
 
 ## Background
 
-為了更好的理解我們的解決方案，我們在這個章節會介紹 NFT Enforced Royalty 和 Fractionalization 的背景知識。
+為了更好的理解我們的解決方案，我們在這個章節會先介紹 NFT Enforced Royalty 和 Fractionalization 的背景知識。
 
 ### What is NFT & Enforced Royalty?
 
@@ -28,6 +28,8 @@ NFT (Non-Fungible Token) 的出現提供了一種可程式化的數位資產，�
 ### What is Fractionalization?
 
 Fractionalization 是一種將 NFT 分割成多個部分的技術，這些部分可以被不同的持有者擁有。Fractionalization 的出現使得 NFT 的流通性大幅提升，也使得 NFT 的價值更加容易被市場所接受。舉例來說一個 NFT 的價值為 1000 USD，Fractionalization 可以將其分割成 100 個部分(通常使用 Fungible Token 來作為憑證)，每個部分價值 10 USD，這樣一來，原本價值 1000 USD 的 NFT 就可以被 100 個人擁有，並且可以在市場上自由交易。
+
+我們將 [Ethereum 的 NFT Fractionalization](https://www.leewayhertz.com/fractional-nft/) 改造成適合 TON 的方法，並且將其應用在 NFT Enforced Royalty 上。
 
 ## Motivation
 
@@ -77,19 +79,67 @@ NFT 在沒有交易額的換手 (Transfer) 時，需要在不影響使用者體�
 
 ![Fractionalize](./images/fractionalize.png)
 
+我們先講述我們的核心 - 使用 NFT 碎片支付版稅
+
+#### Steps
+
+1. 當 **Alan** 轉移 **NFT Item** 時，**NFT Item** 會被鎖定
+2. 鑄造 **NFT Fraction (Jetton)** 給 **Jacky**
+3. 另一部份會鑄造給 **Author** 作為版稅。
+4. 這些 **NFT Fraction** 未來再轉移給其他人時，也會扣除一定比例的版稅。
+
+簡單來說，我們可以將 NFT 碎片當作是一種股份（Share），未來的額外收益都會交給持有碎片的人，例如說有人要買斷 NFT （收購所有碎片），那收購所付出的金額就會依照碎片的比例分配給每個碎片的持有者。
+
+不過看到這裡，你可能會想：
+
+:::danger
+**我不想要我的 NFT 變成碎片！我想要轉移完整的 NFT！**
+:::
+
+或是
+
+:::danger
+**我不想要我持有的 NFT 碎片隨時都能被收購！**
+:::
+
+沒關係！我們提供了多種選項給使用者，讓使用者可以自由選擇自己想要的版稅強制執行機制。接下來的 **Quota** 和 **Auction** 就是不會碎片化的解決方案。
+
 ### 🎯 Quota
 
 ![Quota](./images/quota.png)
+
+有鑑於有些人想要完整的轉移 NFT，但是又不想要藉由 **Auction** 這種耗時間的方式來轉移，我們提供了 **Quota** 這種解決方案。
+
+#### Steps
+
+1. **Author** 會使用  `IssueQuota` 來提供 **Quota** 讓大家來購買，並且會訂定 **Quota** 的價格與數量
+2. 由於 **Alan** 想要轉移完整的 NFT，所以他會使用 `BuyQuota` 來購買 **Quota**
+3. **Alan** 會使用 `Transfer` ，消耗 `Quota` 來轉移 NFT 給 **Jacky**
+
+用於支付 `Quota` 的 TON 會存儲在 `QuotaShop` 中，**Author** 可以隨時使用 `Withdraw` 將 TON 提領出來。
 
 ### 🎯 Auction
 
 ![Auction](./images/auction.png)
 
+
+## Summary
+
+上面介紹了我們不同的版稅選擇，我們來總結一下他們的特性
+
+|               | 版稅支付     | 轉移時間                  | 使用者選用時機                                     |
+| ------------- | ------------ | ------------------------- | -------------------------------------------------- |
+| Fractionalize | NFT 碎片     | 短                        | 想要立即轉移，並且不想使用 TON / Jetton 來支付版稅 |
+| Quota         | TON / Jetton | 中，需要事先購買 Quota    | 想要轉移完整的 NFT，但不想等待 Auction 結束        |
+| Auction       | TON          | 長，需要等待 Auction 結束 | 想要轉移完整的 NFT，並且想要最大化收入             |
+
 ## Message Flows
 
 ![Overview](./images/overview.png)
 
-## Limitations
+## Implementation 
+
+我們使用了 [Tact](https://tact-lang.org/) 按照 [TON Enhancement Proposals (TEP)](https://github.com/ton-blockchain/TEPs) 撰寫了一系列的標準、可複用的 `traits`，並且使用這些 `traits` 來實作我們[上述說明的 NFT Enforced Royalty 機制](https://github.com/Ton-Dynasty/tondynasty-contracts/blob/main/contracts/nft_enforce_royalty_example.tact)。並且針對 NFT Enfroced Royalty 撰寫了[一系列的 Test 來驗證我們的實作](https://github.com/Ton-Dynasty/tondynasty-contracts/tree/main/tests/NFTEnforceRoyalty)。
 
 ## Resources
 
