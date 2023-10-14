@@ -314,7 +314,7 @@ virtual inline fun _transfer_jetton(ctx: Context, msg: JettonTransfer) {
 
 ### Basic Usage
 
-要使用我們的 Jetton Wallet Trait，首先需要先實作一個 Jetton Wallet 合約，並且實作 `calculate_jetton_wallet_init(owner_address: Address)` 等等 must override function 以及 init function，例如：
+要使用我們的 Jetton Wallet Trait，首先需要先實作一個 Jetton Wallet 以及一個 [Jetton Master](JettonMaster) 合約，並且實作 `calculate_jetton_wallet_init(owner_address: Address)` 等等 must override function 以及 init function，例如：
 
 ```typescript
 import "@stdlib/deploy";
