@@ -27,9 +27,11 @@ NFT (Non-Fungible Token) 的出現提供了一種可程式化的數位資產，�
 
 ### What is Fractionalization?
 
-Fractionalization 是一種將 NFT 分割成多個部分的技術，這些部分可以被不同的持有者擁有。Fractionalization 的出現使得 NFT 的流通性大幅提升，也使得 NFT 的價值更加容易被市場所接受。舉例來說一個 NFT 的價值為 1000 USD，Fractionalization 可以將其分割成 100 個部分(通常使用 Fungible Token 來作為憑證)，每個部分價值 10 USD，這樣一來，原本價值 1000 USD 的 NFT 就可以被 100 個人擁有，並且可以在市場上自由交易。
+`Fractionalization` 是一種將 NFT 分割成多個部分的技術，這些部分可以被不同的持有者擁有。`Fractionalization` 的出現使得 NFT 的流通性大幅提升，也使得 NFT 的價值更加容易被市場所接受。
 
-我們將 [Ethereum 的 NFT Fractionalization](https://www.leewayhertz.com/fractional-nft/) 改造成適合 TON 的方法，並且將其應用在 NFT Enforced Royalty 上。
+舉例來說一個 NFT 的價值為 1000 USD，`Fractionalization` 可以將其分割成 100 個部分（通常使用 Fungible Token 來作為憑證），每個部分價值 10 USD，這樣一來，原本價值 1000 USD 的 NFT 就可以被 100 個人擁有，並且可以在市場上自由交易。
+
+我們將 [Ethereum 的 NFT Fractionalization](https://www.leewayhertz.com/fractional-nft/) 改造成適合 TON 的模式，並且將其應用在 NFT Enforced Royalty 上。
 
 ## Motivation
 
@@ -46,13 +48,13 @@ Fractionalization 是一種將 NFT 分割成多個部分的技術，這些部分
 ### Requirements
 
 :::info
-NFT Enforced Royalty 在每次進行交易時，都要根據交易額收取一定比例的版稅。
+1. NFT Enforced Royalty 在每次進行交易時，都要根據交易額收取一定比例的版稅。
 :::
 
 這個比較沒有異議，因為這是 NFT Enforced Royalty 的基本需求。
 
 :::info
-NFT 在沒有交易額的換手 (Transfer) 時，需要在不影響使用者體驗的情況下 (e.g. Transfer 的時候要收取)，收取一定比例的版稅。
+2. NFT 在沒有交易額的換手 (Transfer) 時，需要在不影響使用者體驗的情況下 (e.g. Transfer 的時候要收取)，收取一定比例的版稅。
 :::
 
 這個需求可能是比較有爭議的，因為這樣一來，使用者在轉移 NFT 時需要支付額外的費用，這樣的體驗對於使用者來說是不友善的。不過這個需求也是有其合理性的，因為這樣一來，創作者可以在 NFT 沒有交易額的換手時，也能夠獲得一定比例的版稅。
@@ -61,13 +63,13 @@ NFT 在沒有交易額的換手 (Transfer) 時，需要在不影響使用者體�
 
 ## Core Concepts - Hybrid Royalty
 
-為了找到創作者和使用者之間的平衡點，我們提出了三種不同的解決方案同時運行，讓使用者可以自由選擇自己想要的版稅強制執行機制，並且在不犧牲使用者體驗的情況下，讓創作者能夠獲得一定比例的版稅。
+為了找到創作者和使用者之間的平衡點，我們提出了三種不同的解決方案同時運行，讓使用者可以自由選擇自己想要的版稅強制執行機制，並且在不犧牲使用者體驗的情況下，同時讓創作者能夠獲得一定比例的版稅。
 
-目前唯有拍賣 (Auction) 能夠產生交易額並計算版稅，那在 Transfer 如何收取費用呢？我們提出了一個新的概念 — Hybrid Royalty，讓 NFT 在沒有交易額的換手時，也能夠獲得一定比例的版稅。
+不過，目前唯有拍賣 (Auction) 能夠產生交易額並計算版稅，那在換手（Transfer）的時候如何收取費用呢？我們提出了一個新的概念 — Hybrid Royalty，讓 NFT 在沒有交易額的換手時，也能夠獲得一定比例的版稅。
 
 :::tip
 
-也就是說 NFT 持有者依然需要支付版稅，但是可以選擇不使用 TON / Jetton 來支付，可以將 NFT 碎片化並抽取其中一定比例作為版稅。
+也就是說 NFT 持有者依然需要支付版稅，但是可以選擇不使用 `TON / Jetton` 來支付，可以將 NFT 碎片化並抽取其中一定比例作為版稅。
 
 :::
 
@@ -122,6 +124,24 @@ NFT 在沒有交易額的換手 (Transfer) 時，需要在不影響使用者體�
 
 ![Auction](./images/auction.png)
 
+再來，如果你期望能夠出售 NFT 並且獲得最大化的收入，那麼我們提供了 **Auction** 這種解決方案，不必再依靠中介人，你可以直接在 TON 上自己開啟拍賣。
+
+拍賣分為兩種，兩種模式流程相同，在結束的時候會將 NFT 轉移給最高出價者，並且將得標的一部分 TON 轉移給 **Author** 作為版稅。如果是買斷 NFT 碎片，收益則由持有碎片的人依照比例分配。
+
+1. 想要出售完整 NFT 的拍賣
+2. 想要買斷 NFT 碎片的拍賣
+
+#### Steps
+
+1. **Start Auction** 會開啟拍賣，並且將 NFT 轉移給 **Auction Contract**
+2. 競標者會使用 `Bid` 來競標
+3. 競標結束後，**Auction Contract** 會將 NFT 轉移給最高出價者，並且將得標的一部分 TON 轉移給 **Author** 作為版稅
+
+:::tip
+如果是買斷 NFT 碎片，我們會將收益存入 `NFT Fraction (Jetton Master)`，持有碎片的人可以隨時使用 `Withdraw` 將 TON 依照提領出來。此時 `NFT Item` 的 `nullifier` 會加 1 ，讓下次碎片化的 `NFT Fraction` 會有不同的 `nullifier`。
+
+這樣做的好處是不用一一發送 TON 給每個持有碎片的人，而是讓他們自己來提領，這樣一來可以節省很多 Gas。
+:::
 
 ## Summary
 
