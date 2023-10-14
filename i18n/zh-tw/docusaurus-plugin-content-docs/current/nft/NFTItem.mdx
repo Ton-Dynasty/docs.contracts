@@ -2,13 +2,10 @@
 sidebar_position: 2
 ---
 
-# NFT Item Standard
-
-TODO: Xander Please translate to chinese
-
-This file provides traits for NFT items compliant with the [TEP-0062 standard](https://github.com/ton-blockchain/TEPs/blob/master/text/0062-nft-standard.md). 
+This file provides traits for NFT items compliant with the [TEP-0062 standard](https://github.com/ton-blockchain/TEPs/blob/master/text/0062-nft-standard.md).
 
 Reference:
+
 - [Official Implementation](https://github.com/ton-blockchain/token-contract/blob/991bdb4925653c51b0b53ab212c53143f71f5476/nft/nft-item.fc#L17)
 - [NFT Template](https://github.com/howardpen9/nft-template-in-tact/blob/tutorial/sources/contract.tact)
 
@@ -16,22 +13,22 @@ Reference:
 
 ### Transfer
 
-Initiates a transfer of the NFT item.
+發起 NFT Item 的交易。
 
 ```typescript
-message(0x5fcc3d14) Transfer { 
-    query_id: Int as uint64;                    
-    new_owner: Address;                         
-    response_destination: Address;              
-    custom_payload: Cell?;                      
-    forward_amount: Int as coins;               
-    forward_payload: Slice as remaining;        
+message(0x5fcc3d14) Transfer {
+    query_id: Int as uint64;
+    new_owner: Address;
+    response_destination: Address;
+    custom_payload: Cell?;
+    forward_amount: Int as coins;
+    forward_payload: Slice as remaining;
 }
 ```
 
 ### OwnershipAssigned
 
-Notifies about the assignment of ownership.
+通知 NFT Item 的所有者變更。
 
 ```typescript
 message(0x05138d91) OwnershipAssigned {
@@ -43,7 +40,7 @@ message(0x05138d91) OwnershipAssigned {
 
 ### Excesses
 
-Handles any excesses in the process.
+負責處理交易中的多餘 TON。
 
 ```typescript
 message(0xd53276db) Excesses {
@@ -53,7 +50,7 @@ message(0xd53276db) Excesses {
 
 ### GetStaticData
 
-Requests static data of the NFT item.
+取得 NFT Item 的靜態 data。
 
 ```typescript
 message(0x2fcb26a2) GetStaticData {
@@ -63,7 +60,7 @@ message(0x2fcb26a2) GetStaticData {
 
 ### ReportStaticData
 
-Reports the requested static data.
+回報 NFT Item 的靜態 data。
 
 ```typescript
 message(0x8b771735) ReportStaticData {
@@ -75,21 +72,21 @@ message(0x8b771735) ReportStaticData {
 
 ## NftData Structure
 
-Describes the data structure of an NFT.
+描述 NFT 的 data 結構。
 
 ```typescript
 struct NftData {
-    is_initialized: Bool;         
-    index: Int;                   
-    collection_address: Address;  
-    owner_address: Address;       
-    individual_content: Cell;     
+    is_initialized: Bool;
+    index: Int;
+    collection_address: Address;
+    owner_address: Address;
+    individual_content: Cell;
 }
 ```
 
 ## NFTItemStandard Trait
 
-Trait encompassing standards for an NFT item.
+實作 NFT Item 的標準。
 
 ```typescript
 contract ExampleNFTItem with NFTItemStandard {
@@ -100,7 +97,7 @@ contract ExampleNFTItem with NFTItemStandard {
     owner: Address;
     individual_content: Cell;
     is_initialized: Bool = false;
-    
+
     init(collection_address: Address, index: Int, owner: Address, individual_content: Cell) {
         self.collection_address = collection_address;
         self.index = index;
@@ -116,7 +113,7 @@ contract ExampleNFTItem with NFTItemStandard {
 
 #### `receive(msg: Transfer)`
 
-Handles a transfer message, initiating the mint or transfer process.
+處理交易訊息，發起 NFT Item 鑄造或轉移 NFT Item。
 
 ```typescript
 receive(msg: Transfer){
@@ -133,7 +130,7 @@ receive(msg: Transfer){
 
 #### `receive(msg: GetStaticData)`
 
-Handles a request for static data.
+處理靜態 data 的請求。
 
 ```typescript
 receive(msg: GetStaticData){
@@ -145,7 +142,7 @@ receive(msg: GetStaticData){
 
 #### `_transfer_estimate_rest_value(ctx: Context): Int`
 
-Calculates the remaining value to be returned to the previous owner.
+計算剩餘的 TON，需要返回給前一個所有者。
 
 ```typescript
 // @dev  _transfer_estimate_rest_value calculates the remain amount of nanotons that should be sent back to the old owner
@@ -159,7 +156,7 @@ inline fun _transfer_estimate_rest_value(ctx: Context): Int {
 
 #### `_transfer_validate(ctx: Context, msg: Transfer, remain: Int)`
 
-Validates the transfer request.
+驗證交易請求。
 
 ```typescript
 // @dev  _transfer_validate checks if the request is valid (e.g. the sender is the current owner of the NFT item)
@@ -172,7 +169,7 @@ virtual inline fun _transfer_validate(ctx: Context, msg: Transfer, remain: Int) 
 
 #### `mint(ctx: Context, msg: Transfer)`
 
-Handles the minting process of an NFT item.
+處理 NFT Item 的鑄造。
 
 ```typescript
 // @dev  mint usually performs the minting of the NFT item
@@ -192,7 +189,7 @@ virtual inline fun mint(ctx: Context, msg: Transfer) {
 
 #### `transfer(ctx: Context, msg: Transfer, remain: Int)`
 
-Executes the transfer, sending appropriate notifications.
+執行 NFT Item 的轉移，並發送相關的通知。
 
 ```typescript
 // @dev  transfer performs the transfer of the NFT item
@@ -205,18 +202,18 @@ virtual inline fun transfer(ctx: Context, msg: Transfer, remain: Int) {
         send(SendParameters{
             to: msg.new_owner,
             value: msg.forward_amount,
-            mode: SendIgnoreErrors, 
+            mode: SendIgnoreErrors,
             bounce: false,
             body: OwnershipAssigned{
                 query_id: msg.query_id,
                 prev_owner: ctx.sender,
                 forward_payload: msg.forward_payload
             }.toCell()
-        }); 
+        });
     }
-    remain = remain - ctx.readForwardFee(); 
-    if (msg.response_destination != newAddress(0, 0) && remain > msg.forward_amount) { 
-        send(SendParameters{ 
+    remain = remain - ctx.readForwardFee();
+    if (msg.response_destination != newAddress(0, 0) && remain > msg.forward_amount) {
+        send(SendParameters{
             to: msg.response_destination,
             value: remain - msg.forward_amount,
             mode: SendPayGasSeparately,
@@ -228,7 +225,7 @@ virtual inline fun transfer(ctx: Context, msg: Transfer, remain: Int) {
 
 #### `_report_static_data(msg: GetStaticData)`
 
-Responds with the static data of the NFT item.
+回報 NFT Item 的靜態 data。
 
 ```typescript
 // @dev  _report_static_data sends a response with the static data of the NFT item
@@ -250,7 +247,7 @@ virtual inline fun _report_static_data(msg: GetStaticData) {
 
 #### `_get_nft_data(): NftData`
 
-Retrieves the NFT data in compliance with TEP-64.
+取得符合 TEP-64 的 NFT data。
 
 ```typescript
 // @dev  _get_nft_data returns the NFT data in the format that complies with TEP-64
@@ -262,9 +259,9 @@ virtual inline fun _get_nft_data(): NftData {
     builder.append(".json");
 
     return NftData {
-        is_initialized: self.is_initialized, 
-        index: self.index, 
-        collection_address: self.collection_address, 
+        is_initialized: self.is_initialized,
+        index: self.index,
+        collection_address: self.collection_address,
         owner_address: self.owner,
         individual_content: builder.toCell()
     };
@@ -275,7 +272,7 @@ virtual inline fun _get_nft_data(): NftData {
 
 #### `get_nft_data(): NftData`
 
-Gets the NFT data.
+取得 NFT data。
 
 ```typescript
 get fun get_nft_data(): NftData {
