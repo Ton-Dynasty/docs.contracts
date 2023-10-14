@@ -2,22 +2,18 @@
 sidebar_position: 1
 ---
 
-TODO: Xander Please translate to chinese
-
-# NFT Collection Standard
-
 This NFT Collection smart contract provides a framework for NFT collections that comply with the [TEP-0062 standard](https://github.com/ton-blockchain/TEPs/blob/master/text/0062-nft-standard.md).
 
 ## Overview
 
-In the TEP-0062 standard, each NFT collection is associated with an NFT Collection smart contract, which stores basic information about the collection, including the next item index, collection content, and owner address.
+在 TEP-0062 標準中，每個 NFT collection 都會關聯一個 NFT Collection smart contract，該合約會儲存關於該 collection 的基本資訊，包括下一個 item 的 index、collection content、owner address。
 
 ### CollectionData Structure
 
 ```typescript
 struct CollectionData {
     next_item_index: Int;     // collection should issue NFT with sequential indexes starting from 1. -1 value implies non-sequential collections.
-    collection_content: Cell; // collection content format should comply with TEP64 
+    collection_content: Cell; // collection content format should comply with TEP64
     owner_address: Address;   // collection owner address, zero address if no owner
 }
 ```
@@ -30,7 +26,7 @@ contract ExampleNFTCollection with NFTCollectionStandard, NFTRoyaltyStandard, Es
     collection_content: Cell;           // collection_content may be the prefix of individual_content
     owner_address: Address;             // owner_address is the address of the owner of the collection
     royalty_params: RoyaltyParams;      // royalty_params is the params of royalty
-    
+
     init(owner_address: Address, collection_content: Cell, royalty_params: RoyaltyParams) {
         self.owner_address = owner_address;
         self.collection_content = collection_content;
@@ -42,8 +38,8 @@ contract ExampleNFTCollection with NFTCollectionStandard, NFTRoyaltyStandard, Es
         let ctx: Context = context();
         let nftItemInit: StateInit = self._get_nft_item_state_init(self.next_item_index);
         send(SendParameters{
-                to: contractAddress(nftItemInit), 
-                value: self.estimate_rest_value(ctx), 
+                to: contractAddress(nftItemInit),
+                value: self.estimate_rest_value(ctx),
                 bounce: false,
                 mode: SendIgnoreErrors,
                 body: Transfer {
@@ -73,7 +69,7 @@ contract ExampleNFTCollection with NFTCollectionStandard, NFTRoyaltyStandard, Es
 
 #### `_get_nft_item_state_init(index: Int): StateInit`
 
-Calculates the initial code for the NFT item contract by item index. This function MUST be overridden in a custom contract.
+透過 NFT Item Index 計算 NFT item contract 的 init code，這個 function **必須要被 override**。
 
 ```typescript
 abstract inline fun _get_nft_item_state_init(index: Int): StateInit;
@@ -81,7 +77,7 @@ abstract inline fun _get_nft_item_state_init(index: Int): StateInit;
 
 #### `_get_nft_content(index: Int, individual_content: Cell): Cell`
 
-Gets the serial number of the NFT item of this collection and the individual content of this NFT item, returns the full content of the NFT item in a format that complies with standard TEP-64.
+透過 NFT item 的 index 拿到 NFT item 的 content，回傳符合 TEP-64 的 NFT item content。
 
 ```typescript
 // @dev _get_nft_content gets the serial number of the NFT item of this collection and the individual content of this NFT item.
@@ -97,7 +93,7 @@ virtual inline fun _get_nft_content(index: Int, individual_content: Cell): Cell 
 
 #### `_get_collection_data(): CollectionData`
 
-Returns NFT collection data.
+回傳 NFT collection 的資訊。
 
 ```typescript
 // @dev get_collection_data returns nft collection data
@@ -118,7 +114,7 @@ virtual inline fun _get_collection_data(): CollectionData {
 
 #### `get_collection_data(): CollectionData`
 
-Retrieves collection data.
+回傳 NFT collection 的資訊。
 
 ```typescript
 get fun get_collection_data(): CollectionData {
@@ -128,7 +124,7 @@ get fun get_collection_data(): CollectionData {
 
 #### `get_nft_address_by_index(index: Int): Address`
 
-Gets the address of the NFT item of this collection by its serial number.
+透過 NFT item 的 index 拿到 NFT item 的 address。
 
 ```typescript
 // @dev get_nft_address_by_index gets the serial number of NFT item of this collection and returns its address
@@ -140,7 +136,7 @@ get fun get_nft_address_by_index(index: Int): Address {
 
 #### `get_nft_content(index: Int, individual_content: Cell): Cell`
 
-Calls `_get_nft_content` and returns the full content of the NFT item in a format that complies with standard TEP-64.
+呼叫 `_get_nft_content` 並回傳符合 TEP-64 的 NFT item content。
 
 ```typescript
 // @dev get_nft_content calls _get_nft_content and returns the full content of the NFT item in format that complies with standard TEP-64.
@@ -153,7 +149,7 @@ get fun get_nft_content(index: Int, individual_content: Cell): Cell {
 
 ### Basic Usage
 
-To utilize the NFT Collection Standard, you need to implement an NFT Collection contract and override essential methods like `_get_nft_item_state_init` and `_get_nft_content`.
+想要使用這個 NFT Collection Standard，你需要實作一個 NFT Collection 合約，並且 override `_get_nft_item_state_init` 和 `_get_nft_content`。
 
 ```typescript
 // Your contract should look something like this
@@ -169,4 +165,3 @@ contract YourNFTCollection with NFTCollectionStandard {
     }
 }
 ```
-
