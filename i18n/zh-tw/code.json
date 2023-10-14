@@ -269,5 +269,33 @@
   "theme.tags.tagsPageTitle": {
     "message": "標籤",
     "description": "The title of the tag list page"
+  },
+  "Start Learning 👋": {
+    "message": "開始學習 👋",
+    "description": "index - start learning"
+  },
+  "TonDynasty contracts was designed from the ground up to be easily installed and used to deploy your own contracts efficiently and securely.": {
+    "message": "TonDynasty合約從一開始就被設計得易於安裝和使用，以便您能夠高效且安全地部署您自己的合約。",
+    "description": "feature - easy to use"
+  },
+  "TonDynasty contracts lets you focus on your business logics, and we'll do the chores.": {
+    "message": "TonDynasty合約讓您專注於您的業務邏輯，而我們將處理瑣事。",
+    "description": "feature - focus on your business"
+  },
+  "You can override the default implementation of the contracts to fit your needs. You can also use the contracts as a library to build your own contracts.": {
+    "message": "您可以覆寫合約的預設實現，以滿足您的需求。您也可以使用合約作為一個基礎庫來構建您自己的合約。",
+    "description": "feature - scalability"
+  },
+  "Easy to Use": {
+    "message": "簡單易用",
+    "description": "feature title - easy to use"
+  },
+  "Focus on Your Business": {
+    "message": "專注於您的業務",
+    "description": "feature title - focus on your business"
+  },
+  "Scalability": {
+    "message": "可擴展性",
+    "description": "feature title - scalability"
   }
 }
