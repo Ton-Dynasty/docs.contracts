@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkdocs_contracts=self.webpackChunkdocs_contracts||[]).push([[232],{9087:t=>{t.exports=JSON.parse('{"permalink":"/docs.contracts/zh-tw/blog/tags/fractionalize","page":1,"postsPerPage":10,"totalPages":1,"totalCount":1,"blogDescription":"Blog","blogTitle":"Blog"}')}}]);

@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkdocs_contracts=self.webpackChunkdocs_contracts||[]).push([[118],{5797:t=>{t.exports=JSON.parse('{"label":"nft","permalink":"/docs.contracts/zh-tw/blog/tags/nft","allTagsPath":"/docs.contracts/zh-tw/blog/tags","count":1}')}}]);

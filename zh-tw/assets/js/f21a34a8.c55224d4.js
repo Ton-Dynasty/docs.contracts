@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkdocs_contracts=self.webpackChunkdocs_contracts||[]).push([[582],{2979:t=>{t.exports=JSON.parse('{"label":"jetton","permalink":"/docs.contracts/zh-tw/blog/tags/jetton","allTagsPath":"/docs.contracts/zh-tw/blog/tags","count":1}')}}]);
