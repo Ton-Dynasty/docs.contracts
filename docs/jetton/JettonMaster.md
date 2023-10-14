@@ -4,7 +4,7 @@ sidebar_position: 1
 
 # Jetton Master
 
-The jetton master smart contract stores general information about the jetton (including the total supply, a metadata link, or the metadata itself).
+This Jetton Master smart contract provides a framework for Jetton Master that comply with the [TEP-0074](https://github.com/ton-blockchain/TEPs/blob/master/text/0074-jettons-standard.md) standard.
 
 ## Overview
 
@@ -47,7 +47,8 @@ get fun get_jetton_data(): JettonData {
 ### Message Types
 
 針對 Jetton Master，我們定義了 JettonMint 這個 Message Type，用於鑄造 Jetton。
-其內容大致上如下：
+
+#### `JettonMint`:
 
 ```typescript
 message JettonMint {
