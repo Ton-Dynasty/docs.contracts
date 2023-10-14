@@ -2,6 +2,6 @@
 sidebar_position: 1
 ---
 
-# Tutorial Intro
+# Welcome to TonDynasty Docs
 
-Title Description
+We provide a set of traits written in [Tact](https://tact-lang.org/), which can be used to build your own contracts, boost your development process and make your contracts more secure.

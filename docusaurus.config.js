@@ -7,7 +7,7 @@ const darkCodeTheme = require("prism-react-renderer/themes/dracula");
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: "TonDynastyDocs",
-  tagline: "Dinosaurs are cool",
+  tagline: "Documents & Tutorial for TonDynasty contracts",
   favicon: "img/favicon.ico",
 
   // Set the production url of your site here
@@ -29,7 +29,7 @@ const config = {
   // to replace "en" with "zh-Hans".
   i18n: {
     defaultLocale: "en",
-    locales: ["en"],
+    locales: ["en", "zh-tw"],
   },
 
   presets: [
@@ -78,6 +78,10 @@ const config = {
           {
             href: "https://github.com/Ton-Dynasty/tondynasty-contracts",
             label: "GitHub",
+            position: "right",
+          },
+          {
+            type: "localeDropdown",
             position: "right",
           },
         ],

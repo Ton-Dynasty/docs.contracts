@@ -1,0 +1,18 @@
+{
+  "version.label": {
+    "message": "Next",
+    "description": "The label for version current"
+  },
+  "sidebar.tutorialSidebar.category.Tutorial - Jetton": {
+    "message": "Tutorial - Jetton",
+    "description": "The label for category Tutorial - Jetton in sidebar tutorialSidebar"
+  },
+  "sidebar.tutorialSidebar.category.Tutorial - NFT": {
+    "message": "Tutorial - NFT",
+    "description": "The label for category Tutorial - NFT in sidebar tutorialSidebar"
+  },
+  "sidebar.tutorialSidebar.category.Tutorial - NFT.link.generated-index.description": {
+    "message": "10 minutes to write your own NFT auction contract",
+    "description": "The generated-index page description for category Tutorial - NFT in sidebar tutorialSidebar"
+  }
+}
