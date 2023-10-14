@@ -1,5 +1,5 @@
 ---
-sidebar_position: 1
+sidebar_position: 3
 ---
 
 # NFT Auction in TON
@@ -8,6 +8,7 @@ sidebar_position: 1
 
 ## Architecture
 ![Architecture](./images/ton_auction_flow.jpg)
+透過TON子母合約的優勢，NFT持有者向**NFT Auction Market Contract**建立專屬的**NFT Auction Contract**進行拍賣。
 ## How does the Auction functionality work?
 
 - 這個智能合約 interface 可以在去中心化且靈活的情況下用於 NFT 的拍賣（或僅購買/出售）。
@@ -35,7 +36,7 @@ message SetUpAuction {
 }
 ```
 
-## Bidders can perform the following actions using the Unstoppable Auction contract:
+## Bidders can perform the following actions using the Auction contract:
 
 ### Customize the auction for a single NFT by specifying the following:
 
@@ -273,7 +274,8 @@ receive(msg: TransferNFT) {
     self.auctionTransferCheck.set(hashSellerNftAddress, null);
 }
 ```
-## Auction Example Code
+## <a id="auction-example-code"></a>Auction Example Code
+
 - NFT Auction Market Trait Link: <https://github.com/Ton-Dynasty/tondynasty-contracts/blob/main/contracts/packages/token/nft/NFTAuctionMarket.tact>
 - NFT Auction Trait Link: <https://github.com/Ton-Dynasty/tondynasty-contracts/blob/main/contracts/packages/token/nft/NFTAuction.tact>
 ```ts
@@ -440,4 +442,190 @@ receive(msg: EndAuction) {
             self.isInitialized = 0;
         }
     }
+```
+
+### NFT Auction Market Contract Internal Functions and Get Methods
+Internal Function:
+``` ts
+// @dev Parses payload to extract auction parameters and initializes the auction with provided data.
+virtual inline fun _parse_forward_payload(seller: Address, nftAddress: Address, payload: Slice) {
+    // Parse payload
+    let beneficiary: Address = payload.loadAddress();
+    let reservePrice: Int = payload.loadCoins();
+    let buyNowPrice: Int = payload.loadCoins();
+    let auctionPeriod: Int = payload.loadUint(256);
+
+    // Set up auction info
+    let auctionInfo: AuctionInfo = self._set_up_auction(seller, nftAddress, reservePrice, buyNowPrice, auctionPeriod, beneficiary); // set up auction
+    self._set_price_validate(buyNowPrice, reservePrice);
+    let nftAuctionInit: StateInit = self._nft_auction_init(nftAddress, seller);
+    let nftAuctionAddress: Address = self.get_nft_auction_address(nftAddress, seller);
+    self._auction_set_validate(nftAuctionAddress);
+    self.auctionOverCheck.set(nftAuctionAddress, nftAddress);
+
+    // Deploy a new NFT Auction Contract
+    self._build_auction(nftAuctionAddress, auctionInfo, nftAuctionInit);
+}
+
+// @dev Create and configure a new NFT Auction Contract with the provided auction info.
+virtual inline fun _build_auction(nftAuctionAddress: Address, auctionInfo: AuctionInfo, nftAuctionInit: StateInit) {
+    send(SendParameters{
+            to: nftAuctionAddress,
+            value: 0,
+            mode: SendRemainingValue,
+            bounce: false,
+            body: BuildNftAuction {
+                auctionInfo: auctionInfo
+            }.toCell(),
+            code: nftAuctionInit.code, 
+            data: nftAuctionInit.data
+        }
+    );
+}
+
+// @dev Validates that the buyNowPrice is higher than the reservePrice.
+virtual inline fun _set_price_validate(buyNowPrice: Int, reservePrice: Int) {
+    require(buyNowPrice > reservePrice, "BuyNowPrice must be greater than reservePrice.");
+}
+
+// @dev Checks if an auction has already been set for the provided NFT address.
+virtual inline fun _auction_set_validate(nftAuctionAddress: Address) {
+    require(self.auctionOverCheck.get(nftAuctionAddress) == null, "Auction was already set for this NFT.");
+}
+
+// @dev Validates that an auction was previously set for the given NFT address.
+virtual inline fun _auction_not_set_validate(nftAuctionAddress: Address) {
+    require(self.auctionOverCheck.get(nftAuctionAddress) != null, "Auction was not set before.");
+}
+
+// @dev Verifies that the NFT was transferred to the auction contract.
+virtual inline fun _auction_transfer_validate(hashSellerNftAddress: Int) {
+    require(self.get_is_auction_transfer_check(hashSellerNftAddress) == 1, "This NFT didn't transfer to NFT Auction Market Contract yet.");
+}
+
+// @dev Initializes an auction for a specified NFT with given parameters such as reserve price, buy now price, and auction duration.
+// @note If you want to use custom auction parameters or logic, consider overriding this function and AuctionInfo struct in a derived contract.
+virtual inline fun _set_up_auction(sellerAddress: Address, nftAddress: Address, reservePrice: Int, buyNowPrice: Int, auctionPeriod: Int, beneficiary: Address): AuctionInfo {
+    let hashSellerNftAddress: Int = self.get_hash_seller_nft_address(sellerAddress, nftAddress);
+    return AuctionInfo {
+        bidIncreasePercentage: self.defaultBidIncreasePercentage,
+        auctionBidPeriod: self.defaultAuctionBidPeriod,
+        auctionPeriod: auctionPeriod,
+        reservePrice: reservePrice,
+        buyNowPrice: buyNowPrice,
+        nftHighestBid: 0,
+        nftHighestBidder: sellerAddress,
+        nftSeller: sellerAddress,
+        whitelistedBuyer: sellerAddress,
+        nftRecipient: sellerAddress,
+        beneficiary: beneficiary
+    };
+}
+```
+NFT Auction需要在知道NFT Auction的Init需要填寫的參數，才有辦法改寫，_nft_auction_init的範例可以在<a href="#auction-example-code">Auction Example Code</a>查看
+```ts
+// @dev Retrieves the initial state for the NFT auction contract.
+// @note one MUST override this function to provide NFT Auction initCode
+abstract fun _nft_auction_init(nftAddress: Address, seller: Address): StateInit;
+```
+Get Methods:
+```ts
+// @dev Determines the NFT auction contract address.
+get fun get_nft_auction_address(nftAddress: Address, seller: Address): Address {
+    let nftAuctionInit: StateInit = self._nft_auction_init(nftAddress, seller);
+    return contractAddress(nftAuctionInit);
+}
+
+// @dev Generates a hash value based on the seller and NFT address.
+get fun get_hash_seller_nft_address(seller: Address, nftAddress: Address): Int {
+    return beginCell().storeAddress(seller).storeAddress(nftAddress).endCell().asSlice().hash();
+}
+
+// @dev Checks if the auction transfer for a given hash is valid.
+get fun get_is_auction_transfer_check(hashSellerNftAddress: Int): Int {
+    if(self.auctionTransferCheck.get(hashSellerNftAddress) == null) {
+        return 0;
+    }
+    else {
+        return 1;
+    }
+}
+```
+
+### NFT Auction Contract Internal Functions and Get Methods
+Internal Function:
+```ts
+// @dev Updates the auction bid period time based on the latest bid and the defined auction bid period
+virtual inline fun _update_auction_bid_period() {
+    self.auctionBidPeriod = now() + self.auctionInfo.auctionBidPeriod;
+}
+
+// @dev Updates the auction end time
+virtual inline fun _update_auction_end_time() {
+    self.auctionEndTime = now() + self.auctionInfo.auctionPeriod;
+}
+
+// @dev Transfer the NFT to the highest bidder
+// @note If you want change msg value, you should make sure that is enough for NFT Auction market contract to transfer NFT.
+virtual inline fun _transfer_nft(buyer: Address) {
+    send(SendParameters{
+        to: self.owner, 
+        value: ton("0.06"), 
+        bounce: true,
+        mode: SendPayGasSeparately,
+        body: TransferNFT {
+            nftAddress: self.nftAddress,
+            seller: self.auctionInfo.nftSeller,
+            query_id: 0,
+            new_owner: buyer,
+            response_destination: buyer,
+            custom_payload: emptyCell(),
+            forward_amount: 0,
+            forward_payload: emptySlice()
+        }.toCell()
+    });
+}
+
+// @dev Transfers the highest bid amount to the seller
+virtual inline fun _send_winning_bid_amount() {
+    let seller: Address = self.auctionInfo.beneficiary;
+    let winningBidAmount: Int = self.auctionInfo.nftHighestBid;
+    send(SendParameters{
+        to: seller,
+        value: winningBidAmount - ton("0.06"), 
+        mode: SendPayGasSeparately, 
+        bounce: false,
+        body: "Pay winning bid amount".asComment()
+    });
+}
+
+// @dev Initializes the auction end time to 0, allowing the seller to auction the NFT again in the future
+virtual inline fun _init_auction_end() {
+    let ctx: Context = context();
+    require(ctx.sender == self.owner, "Only owner can init auction end time.");
+    self.auctionBidPeriod = 0;
+}
+```
+
+Get Methods
+```ts
+// @dev Returns the current auction information
+get fun get_auctin_info(): AuctionInfo {
+    return self.auctionInfo;
+}
+
+// @dev Checks if the auction is initialized and returns the state (1 for initialized, 0 otherwise)
+get fun get_is__initialized(): Int {
+    return self.isInitialized;
+}
+
+// @dev Returns the end time of the auction
+get fun get_auction_end(): Int {
+    return self.auctionEndTime;
+}
+
+// @dev Retruns the auction bid period
+get fun get_auction_bid_period(): Int {
+    return self.auctionBidPeriod;
+}
 ```
