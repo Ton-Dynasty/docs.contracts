@@ -70,7 +70,7 @@ message(0x7362d09c) JettonTransferNotification {
 
 #### `JettonBurn`:
 
-用於 Jetton Wallet 銷毀自己合約中的 Jetton。
+Jetton Wallet 銷毀自己合約中的 Jetton。
 
 ```typescript
 message(0x595f07bc) JettonBurn {
@@ -93,7 +93,7 @@ message(0xd53276db) JettonExcesses {
 
 #### `JettonInternalTransfer`:
 
-用於 Jetton Wallet 與其他 Jetton Wallet 或與 Jetton Master 之間的轉帳。
+Jetton Wallet 與其他 Jetton Wallet 或與 Jetton Master 之間的轉帳。
 範例：
 
 1. Jetton Wallet 與其他 Jetton Wallet 之間的轉帳：Jetton Wallet 傳送一個 `JettonInternalTransfer` 給 Jetton Wallet，Jetton Wallet 會將 Jetton 轉移給 `destination` 擁有的 Jetton Wallet，並且將剩餘的 TON 帶回 `response_destination`。
