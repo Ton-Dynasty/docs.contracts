@@ -84,7 +84,7 @@ trait NFTAuctionMarketStandard {
 
 透過繼承 `NFTAuctionMarketStandard` 快速實作屬於自己的 Auction Contract，可以自行改寫預設基本競價變數。
 
-### Seller 需要先將 NFT 轉移到 Auction Market
+### Seller needs to first transfer NFT to Auction Market
 
 ```typescript
 // @dev Processes the OwnershipAssigned message and updates auction mappings,
@@ -135,7 +135,7 @@ receive(msg: SetUpAuction) {
 }
 ```
 
-### Auction Market 成功建立專屬的 NFT Auction Contract 後
+### After the Auction Market successfully establishes a dedicated NFT Auction Contract
 
 - 競標者可以向 NFT Auction Contract，發送 `Bid` message，向此 NFT 競標，`message.value` 即是投標價格。
 - Auction Market 收到 `Bid` 訊息後，會先檢查 this auction is still active or not.
@@ -195,7 +195,7 @@ if(bidValue > self.auctionInfo.reservePrice) {
     }
 }
 ```
-### 結算NFT Auction
+### Settling the NFT Auction
 
 - 當Auction Bid Period結束都沒人提出更高的競價，則任何人都可以向Autction contract發送結算的Message。
 - 若Auction已經開始(競價已經超過`reservePrice`)，Auction結束後，會將`BidValue`傳送給Seller，並轉移NFT給Bidder。

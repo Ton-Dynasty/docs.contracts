@@ -4,27 +4,28 @@ sidebar_position: 3
 
 # NFT Auction
 
-實作基礎 TON NFT 拍賣功能
+Implementing basic TON NFT auction functionality
 
 ## Architecture
 ![Architecture](./images/ton_auction_flow.jpg)
-透過TON子母合約的優勢，NFT持有者向**NFT Auction Market Contract**建立專屬的**NFT Auction Contract**進行拍賣。
+Leveraging the advantages of TON parent-child contracts, NFT holders create a dedicated **NFT Auction Contract** through the **NFT Auction Market Contract** for auctioning.
+
 ## How does the Auction functionality work?
 
-- 這個智能合約 interface 可以在去中心化且靈活的情況下用於 NFT 的拍賣（或僅購買/出售）。
-- 賣家和競標者能夠創建自定義的拍賣和出價，從而實現全面的 NFT 拍賣/銷售機制。
+- This smart contract interface can be used for NFT auctions (or just buying/selling) in a decentralized and flexible manner.
+- Sellers and bidders are able to create customized auctions and bids, enabling a comprehensive NFT auction/selling mechanism.
 
 ## NFT sellers can perform the following actions to sell or auction their NFTs:
 
 ### Create an auction for a single NFT and customize its auction by specifying the following:
 
-- `NFTAddress`: 拍賣的 NFT 的地址。
-- `reservePrice`: 當達到此價格時，拍賣開始，用戶有一段特定的時間來進行後續的更高出價。如果也設置了 `buyNowPrice`，則最低價格不能大於 `buyNowPrice`。
-- `buyNowPrice`: 當買家達到此價格時，將自動結束拍賣。
-- `auctionEnd`: 此競標 NFT 拍賣的期限。
-- `defaultAuctionBidPeriod`: 指定拍賣在達到最低價格後將持續的時間。每次達到更高的出價後，拍賣將再次持續這段時間。例如，如果拍賣投標期限設置為 x，並且最低價格在時間 T0 達到，則拍賣將在時間 T0+x 結束。但是，如果在時間 T1（其中 T0 < T1 < T0+x）由另一名競標者出價更高，則拍賣結束時間將更新為時間 T1 +x。
-- `defaultBidIncreasePercentage`: 它確定競標者必須存入的金額，以成為最高競標者。因此，如果出價 X 金額，則下一名競標者必須出價 X + ((X \* 出價增加百分比)/10000)。
-- `beneficiary`: 當拍賣結束時，將收到拍賣的售價發送的指定的 `Address。`
+- `NFTAddress`: The address of the NFT being auctioned.
+- `reservePrice`: The auction begins when this price is reached, and users have a specific period of time to make subsequent higher bids. If `buyNowPrice` is also set, the reserve price cannot be higher than the `buyNowPrice`.
+- `buyNowPrice`: The auction automatically ends when a buyer reaches this price.
+- `auctionEnd`: The deadline for this NFT auction bidding.
+- `defaultAuctionBidPeriod`: Specifies the duration of the auction after reaching the reserve price. Each time a higher bid is reached, the auction will continue for this period again. For example, if the auction bid period is set to x, and the reserve price is reached at time T0, the auction will end at time T0+x. However, if a higher bid is made at time T1 (where T0 < T1 < T0+x) by another bidder, the auction end time will be updated to T1 +x.
+- `defaultBidIncreasePercentage`: It determines the amount a bidder must deposit to become the highest bidder. Therefore, if the bid amount is X, the next bidder must bid X + ((X * bid increase percentage)/10000).
+- `beneficiary`: The `Address` specified to receive the auction proceeds when the auction ends.
 
 ```typescript
 message SetUpAuction {
@@ -40,27 +41,27 @@ message SetUpAuction {
 
 ### Customize the auction for a single NFT by specifying the following:
 
-- `bidVale`: 如果已經有人出價，競標者必須出更高的出價增加百分比金額。但如果這已經滿足，競標者無需出更高於賣家設定的最低價格的出價（在這種情況下，拍賣不會開始）。因此，如果在拍賣上沒有出價，競標者可以指定任何金額。
-- 用戶還可以進行自定義出價，並指定 NFT 接收者，如果他們的出價成功，則 NFT 將轉移給該接收者。
+- `bidVale`: If there is already a bid, bidders must bid a higher amount by the bid increase percentage. But if this is already satisfied, bidders don't need to bid higher than the seller's set reserve price (in this case, the auction will not start). Therefore, if there are no bids on the auction, bidders can specify any amount.
+- Users can also make custom bids, specifying an NFT recipient, and if their bid is successful, the NFT will be transferred to that recipient.
 
 ### Purchase an NFT by specifying the following during the sale:
 
-- 在這種情況下，購買者可以以低於立即購買價格的金額進行出價，這不會結束銷售。然後，購買者必須以比之前的低出價金額高的默認百分比金額進行出價。如果競標者指定的金額等於或高於立即購買價格，則銷售將結束，並且 NFT 和購買金額將被轉移。
+- In this case, buyers can bid an amount less than the buy-now price, which will not end the sale. Then, buyers must bid an amount higher by the default percentage than the previous lower bid. If the bidder specifies an amount equal to or higher than the buy-now price, the sale will end, and the NFT and purchase amount will be transferred.
 
-## Addtional functions avaliable
+## Additional functions available
 
-Sellers can
+Sellers can:
 
-- 如果拍賣的最低價格尚未達到，或者在出售時隨時提取他們的拍賣。
-- 更新拍賣的最低價格。只有在已經沒有出價超過原始最低價格的情況下，才能進行此操作。
-- 更新拍賣或銷售的立即購買價格。如果在拍賣或銷售上已經進行了出價，並且此更新將意味著此出價現在滿足立即購買價格，則將結束拍賣或銷售，並相應分配 NFT 和出價金額。
-- 接受最高出價金額並結束拍賣或銷售。
+- Withdraw their auction if the reserve price has not been met or at any time during the sale.
+- Update the auction's reserve price. This action can only be done if there have been no bids exceeding the original reserve price.
+- Update the buy-now price for the auction or sale. If there has been a bid on the auction or sale, and this update would mean this bid now meets the buy-now price, the auction or sale will end, and the NFT and bid amount will be allocated accordingly.
+- Accept the highest bid amount and end the auction or sale.
 
-Bidders can
+Bidders can:
 
-- 在拍賣投標期限已過（最低出價已達到）的情況下，任何用戶都可以結算拍賣並將出價和 NFT 分發給相應的賣家和接收者。
-- 當投標者的 `bidVale`，被新的投標者的 `bidVale` 超過時，會將前一筆競價的 `bidVale` 還給投標者，並更新新的最高競標價格以及競價者。
-- NFT的Seller不能對自己的NFT拍賣競標。
+- Anyone can settle the auction and distribute the bids and NFT to the respective seller and recipient once the auction bid period has passed (the reserve bid has been met).
+- When a bidder's `bidVale` is surpassed by a new bidder's `bidVale`, the previous bid's `bidVale` is returned to the bidder, and the new highest bid price and bidder are updated.
+- The seller of the NFT cannot bid on their own NFT auction.
 ## Let's TON it up!!!
 
 ### With NFTAuctionMarketStandard
@@ -69,8 +70,8 @@ Github Repo: <https://github.com/Ton-Dynasty/tondynasty-contracts>
 ```typescript
 trait NFTAuctionMarketStandard {
     owner: Address;
-    // Check whether nft is transfered to NFT Auction Market Contract
-    auctionTransferCheck: map<Int, Int>; // key => hash(sellerAddress and nftAddress), vlaue => 1: set, 0: not set
+    // Check whether nft is transferred to NFT Auction Market Contract
+    auctionTransferCheck: map<Int, Int>; // key => hash(sellerAddress and nftAddress), value => 1: set, 0: not set
     // Check whether nft auction is over or not
     auctionOverCheck: map<Address, Address>;  // key => nft auction contract address, value => 1: not over, 0: over
 
@@ -82,9 +83,9 @@ trait NFTAuctionMarketStandard {
 }
 ```
 
-透過繼承 `NFTAuctionMarketStandard` 快速實作屬於自己的 Auction Contract，可以自行改寫預設基本競價變數。
+Quickly implement your own Auction Contract by inheriting `NFTAuctionMarketStandard`, with the flexibility to rewrite default basic bidding variables.
 
-### Seller 需要先將 NFT 轉移到 Auction Market
+### Seller needs to first transfer NFT to Auction Market
 
 ```typescript
 // @dev Processes the OwnershipAssigned message and updates auction mappings,
@@ -104,10 +105,11 @@ receive(msg: OwnershipAssigned) {
 }
 ```
 
-- Seller 向 NFT Item 發送 `Transfer` message，當 NFT Owner 更改成 Auction Market 後，NFT Item 會發送 `OwnershipAssigned` message 到 Auction Market Cotnract，
-  當 Auction Contract 收到訊息後，會紀錄轉移成功。
-- Seller 可以利用 `OwnershipAssigned` mesage 的 `custome_payload` 填寫 `SetUpAuction` 的基本函數，若有填寫 `custome_payload，則會同時替` Seller Deploy NFT Auction Contract。
-- 若 `custome_payload` 並未填寫，則可以再次向 NFT Auction Market contract 傳送 `SetUpAuction` mesage，並 Deploy NFT Auction Contract。
+- The Seller sends a `Transfer` message to the NFT Item. When the NFT Owner changes to the Auction Market, the NFT Item will send an `OwnershipAssigned` message to the Auction Market Contract. Upon receiving the message, the Auction Contract will record the transfer as successful.
+- The Seller can use the `OwnershipAssigned` message's `custom_payload` to fill in the basic function of `SetUpAuction`. If `custom_payload` is filled in, it will also Deploy the NFT Auction Contract for the Seller simultaneously.
+- If `custom
+
+_payload` is not filled in, you can send a `SetUpAuction` message to the NFT Auction Market contract again and Deploy the NFT Auction Contract.
 
 ```typescript
 // @dev Handles the receipt of a SetUpAuction message.
@@ -135,10 +137,10 @@ receive(msg: SetUpAuction) {
 }
 ```
 
-### Auction Market 成功建立專屬的 NFT Auction Contract 後
+### After the Auction Market successfully establishes a dedicated NFT Auction Contract
 
-- 競標者可以向 NFT Auction Contract，發送 `Bid` message，向此 NFT 競標，`message.value` 即是投標價格。
-- Auction Market 收到 `Bid` 訊息後，會先檢查 this auction is still active or not.
+- Bidders can send a `Bid` message to the NFT Auction Contract, bidding on this NFT, where `message.value` is the bid price.
+- Upon receiving the `Bid` message, the Auction Market will first check if this auction is still active or not.
 
 ```ts
 // Check if auction is still active.
@@ -147,7 +149,7 @@ require(self.isInitialized == 1, "Contract is not initialized");
 require((now() < self.auctionBidPeriod) |(self.auctionBidPeriod == 0), "Auction bid period ended");
 ```
 
-- 檢查`bidValue`是否超過`buyNowPrice`
+- Check if `bidValue` exceeds `buyNowPrice`
 ``` ts
 let bidValue: Int = ctx.value;
 let buyNowPrice: Int = self.auctionInfo.buyNowPrice;
@@ -161,13 +163,13 @@ if(bidValue >= buyNowPrice) {
     return;
 }
 ```
-- 若沒有超過直購價，則會檢查是否有超過目前最高競標價的最低加價比例
+- If it doesn't exceed the direct purchase price, it will check if it exceeds the minimum increase percentage of the current highest bid
 ```ts
 let bidIncreaseAmount: Int = (self.auctionInfo.nftHighestBid * (10000 + self.auctionInfo.bidIncreasePercentage)) / 10000;
 require(bidValue > bidIncreaseAmount, "Bid doesn't meet the minimum increase requirement");
 ```
 
-- 若有超過加價比例，則會將Previos Highest Bid Value送還給Previos Highest Bidder。
+- If it exceeds the increase percentage, the Previous Highest Bid Value will be returned to the Previous Highest Bidder.
 ```ts
 // Send back previous highest bid to previous highest bidder.
 let prevNftHighestBidder: Address = self.auctionInfo.nftHighestBidder;
@@ -181,7 +183,7 @@ send(SendParameters{
     body: "Pay bid money back to the prevNftHighestBidder".asComment()
 });
 ```
-- Update Highest Bid、Bidder以及Auction Bid Period
+- Update Highest Bid, Bidder, and Auction Bid Period
 ```ts
 // Update highest bid and Transfer ton back to previous highest bidder.
 self.auctionInfo.nftHighestBidder = ctx.sender;
@@ -195,13 +197,13 @@ if(bidValue > self.auctionInfo.reservePrice) {
     }
 }
 ```
-### 結算NFT Auction
+### Settling the NFT Auction
 
-- 當Auction Bid Period結束都沒人提出更高的競價，則任何人都可以向Autction contract發送結算的Message。
-- 若Auction已經開始(競價已經超過`reservePrice`)，Auction結束後，會將`BidValue`傳送給Seller，並轉移NFT給Bidder。
-- 若Auction尚未開始，則會將NFT轉還給Seller。
+- If the Auction Bid Period ends without anyone offering a higher bid, anyone can send a settlement Message to the Autction contract.
+- If the Auction has already started (the bid has already exceeded the `reservePrice`), the `BidValue` will be sent to the Seller after the Auction ends, and the NFT will be transferred to the Bidder.
+- If the Auction has not started, the NFT will be returned to the Seller.
 ```ts
-// @dev Ends the auction and transfers the NFT to the highest bidder or back to the seller(If autcion not started)
+// @dev Ends the auction and transfers the NFT to the highest bidder or back to the seller(If auction not started)
 receive("EndAuction") {
     // If this auction started, it will transfer NFT to highest bidder.
     // Else, it will transfer NFT to seller.
@@ -224,8 +226,8 @@ receive("EndAuction") {
     }
 }
 ```
-- 將NFT轉移給新Owner
-- 發送`TransferNFT` Message給NFT Auction Contract，再將NFT轉移給新Owner
+- Transfer NFT to the new Owner
+- Send `TransferNFT` Message to NFT Auction Contract, then transfer NFT to the new Owner
 ```ts
 // @dev Transfer the NFT to the highest bidder
 // @note If you want change msg value, you should make sure that is enough for NFT Auction market contract to transfer NFT.
@@ -248,7 +250,9 @@ virtual inline fun _transfer_nft(buyer: Address) {
     });
 }
 ```
-- NFT Auction Contract收到轉移NFT的訊息後，對NFT Item發送`Transfer` message更換Owner
+- Upon receiving the NFT transfer message, the NFT
+
+ Auction Contract sends a `Transfer` message to the NFT Item to change the Owner
 ```ts
 // @dev Handles the TransferNFT message and facilitates NFT transfer to the auction's winning bidder.
 receive(msg: TransferNFT) {
@@ -273,7 +277,6 @@ receive(msg: TransferNFT) {
     let hashSellerNftAddress: Int = self.get_hash_seller_nft_address(msg.seller, msg.nftAddress);
     self.auctionTransferCheck.set(hashSellerNftAddress, null);
 }
-```
 ## <a id="auction-example-code"></a>Auction Example Code
 
 - NFT Auction Market Trait Link: <https://github.com/Ton-Dynasty/tondynasty-contracts/blob/main/contracts/packages/token/nft/NFTAuctionMarket.tact>
@@ -287,7 +290,7 @@ contract ExampleNFTAuctionMarket with Deployable, NFTAuctionMarketStandard {
     // Get auction info by seller address and nft address.
     nftContractAuctions: map<Int, AuctionInfo>; // key => hash(sellerAddress and nftAddress), value => AuctionInfo
     // Check whether nft is transfered to NFT Auction Market Contract
-    auctionTransferCheck: map<Int, Int>; // key => hash(sellerAddress and nftAddress), vlaue => 1: set, 0: not set
+    auctionTransferCheck: map<Int, Int>; // key => hash(sellerAddress and nftAddress), value => 1: set, 0: not set
     // Get auction info by nft collection address and nft id.
     collectionNftIdToAuction: map<Int, Int>; // key => hash(nft collection address and nft id), value => hash(sellerAddress and nftAddress)
     // Check whether nft auction is over or not
@@ -336,10 +339,10 @@ contract ExampleNFTAuction with NFTAuctionStandard {
 
 ```
 
-## Addtional Functions 
+## Additional Functions 
 ### Revise SetUp Auction
-- 當拍賣還未開始時，Seller可以更改`reserve_price`以及`buyNowPrice`
-- 向NFT Autcion Market發送`ReviseSetUpAuction` message
+- If the auction has not yet started, the Seller can change the `reserve_price` and `buyNowPrice`.
+- Send a `ReviseSetUpAuction` message to the NFT Auction Market.
 ```ts
 // @dev Updates auction details after verifying NFT transfer and previous auction setup, then communicates the update to the nftAuctionAddress.
 receive(msg: ReviseSetUpAuction) {
@@ -369,7 +372,7 @@ receive(msg: ReviseSetUpAuction) {
     );
 }
 ```
-- NFT Auction Market會向NFT Auction Contract發送更改訊息
+- The NFT Auction Market will send a modification message to the NFT Auction Contract.
 ```ts
 // @dev Allows owner to adjust auction's reserve or buy-now prices.
 receive(msg: ReviseAuction) {
@@ -395,11 +398,11 @@ receive(msg: ReviseAuction) {
 }
 ```
 ### EndAuction
-- 若Seller想要提前終止拍賣，則可以向NFT Auction Market傳送`EndAuction` message
+- If the Seller wants to terminate the auction early, they can send an `EndAuction` message to the NFT Auction Market.
 ```ts
 // @dev Allows the seller to terminate an auction. 
 //      It verifies if the auction was previously set and then sends a message to the nftAuctionAddress to conclude the auction.
-//      It will transfer the NFT to the highest bidder or back to the seller(If autcion not started).
+//      It will transfer the NFT to the highest bidder or back to the seller(If auction not started).
 receive(msg: EndAuction) {
     // Seller can end auction.
     let ctx: Context = context();
@@ -417,10 +420,10 @@ receive(msg: EndAuction) {
     );
 }
 ```
-- 若拍賣已經開始，則馬上結標傳送給目前的Highest Bidder，並把`BidValue`傳送給Seller
-- 若拍賣尚未開始，則將NFT轉換給Seller
+- If the auction has already started, it will immediately conclude and send the NFT to the current Highest Bidder, and the `BidValue` will be sent to the Seller.
+- If the auction has not started, the NFT will be returned to the Seller.
 ```ts
-// @dev Ends the auction and transfers the NFT to the highest bidder or back to the seller(If autcion not started)
+// @dev Ends the auction and transfers the NFT to the highest bidder or back to the seller(If auction not started)
     receive("EndAuction") {
         // If this auction started, it will transfer NFT to highest bidder.
         // Else, it will transfer NFT to seller.
@@ -464,7 +467,9 @@ virtual inline fun _parse_forward_payload(seller: Address, nftAddress: Address, 
     self.auctionOverCheck.set(nftAuctionAddress, nftAddress);
 
     // Deploy a new NFT Auction Contract
-    self._build_auction(nftAuctionAddress, auctionInfo, nftAuctionInit);
+    self._build_auction(nftAuctionAddress, auctionInfo,
+
+ nftAuctionInit);
 }
 
 // @dev Create and configure a new NFT Auction Contract with the provided auction info.
@@ -522,7 +527,7 @@ virtual inline fun _set_up_auction(sellerAddress: Address, nftAddress: Address, 
     };
 }
 ```
-NFT Auction需要在知道NFT Auction的Init需要填寫的參數，才有辦法改寫，_nft_auction_init的範例可以在<a href="#auction-example-code">Auction Example Code</a>查看
+To know the parameters required for the NFT Auction's Init, you need to refer to the example of _nft_auction_init which can be found in the [Auction Example Code](#auction-example-code).
 ```ts
 // @dev Retrieves the initial state for the NFT auction contract.
 // @note one MUST override this function to provide NFT Auction initCode
@@ -610,12 +615,12 @@ virtual inline fun _init_auction_end() {
 Get Methods
 ```ts
 // @dev Returns the current auction information
-get fun get_auctin_info(): AuctionInfo {
+get fun get_auction_info(): AuctionInfo {
     return self.auctionInfo;
 }
 
 // @dev Checks if the auction is initialized and returns the state (1 for initialized, 0 otherwise)
-get fun get_is__initialized(): Int {
+get fun get_is_initialized(): Int {
     return self.isInitialized;
 }
 
@@ -624,7 +629,7 @@ get fun get_auction_end(): Int {
     return self.auctionEndTime;
 }
 
-// @dev Retruns the auction bid period
+// @dev Returns the auction bid period
 get fun get_auction_bid_period(): Int {
     return self.auctionBidPeriod;
 }
