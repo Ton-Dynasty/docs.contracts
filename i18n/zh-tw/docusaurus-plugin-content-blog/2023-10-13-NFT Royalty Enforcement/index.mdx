@@ -46,13 +46,13 @@ NFT (Non-Fungible Token) 的出現提供了一種可程式化的數位資產，�
 ### Requirements
 
 :::info
+
 1. NFT Enforced Royalty 在每次進行交易時，都要根據交易額收取一定比例的版稅。
-:::
+   :::
 
 這個比較沒有異議，因為這是 NFT Enforced Royalty 的基本需求。
 
-:::info
-2. NFT 在沒有交易額的換手 (Transfer) 時，需要在不影響使用者體驗的情況下 (e.g. Transfer 的時候要收取)，收取一定比例的版稅。
+:::info 2. NFT 在沒有交易額的換手 (Transfer) 時，需要在不影響使用者體驗的情況下 (e.g. Transfer 的時候要收取)，收取一定比例的版稅。
 :::
 
 這個需求可能是比較有爭議的，因為這樣一來，使用者在轉移 NFT 時需要支付額外的費用，這樣的體驗對於使用者來說是不友善的。不過這個需求也是有其合理性的，因為這樣一來，創作者可以在 NFT 沒有交易額的換手時，也能夠獲得一定比例的版稅。
@@ -111,9 +111,15 @@ NFT (Non-Fungible Token) 的出現提供了一種可程式化的數位資產，�
 
 有鑑於有些人想要完整的轉移 NFT，但是又不想要藉由 **Auction** 這種耗時間的方式來轉移，我們提供了 **Quota** 這種解決方案。
 
+Qutoa 解決方案是對於一個 NFT Item 引入一個 QuotaShop，QuotaShop 會提供 Quota 給使用者，並且轉移時可以消耗 Quota 來避免 NFT 被碎片化。
+
+:::tip
+在目前的 POC 版本，我們的實做方式是讓作者自行決定 Quota 的金額與數量，這會一定程度的導致中心化。然而，QuotaShop 的價格應該要由市場來決定，我們會在未來引入激勵機制讓社群共同參與 QuotaShop 的定價，讓 QuotaShop 的價格更加合理。
+:::
+
 #### Steps
 
-1. **Author** 會使用  `IssueQuota` 來提供 **Quota** 讓大家來購買，並且會訂定 **Quota** 的價格與數量
+1. **Author** 會使用 `IssueQuota` 來提供 **Quota** 讓大家來購買，並且會訂定 **Quota** 的價格與數量
 2. 由於 **Alan** 想要轉移完整的 NFT，所以他會使用 `BuyQuota` 來購買 **Quota**
 3. **Alan** 會使用 `Transfer` ，消耗 `Quota` 來轉移 NFT 給 **Jacky**
 
@@ -156,11 +162,17 @@ NFT (Non-Fungible Token) 的出現提供了一種可程式化的數位資產，�
 
 ![Overview](./images/overview.png)
 
-## Implementation 
+## Implementation
 
 我們使用了 [Tact](https://tact-lang.org/) 按照 [TON Enhancement Proposals (TEP)](https://github.com/ton-blockchain/TEPs) 撰寫了一系列的標準、可複用的 `traits`，並且使用這些 `traits` 來實作我們[上述說明的 NFT Enforced Royalty 機制](https://github.com/Ton-Dynasty/tondynasty-contracts/blob/main/contracts/nft_enforce_royalty_example.tact)。並且針對 NFT Enfroced Royalty 撰寫了[一系列的 Test 來驗證我們的實作](https://github.com/Ton-Dynasty/tondynasty-contracts/tree/main/tests/NFTEnforceRoyalty)。
 
 <GithubBookmark owner="Ton-Dynasty" repoName="tondynasty-contracts" />
+
+## Future Works
+
+我們提出了一個新的概念 — Hybrid Royalty，讓 NFT 在換手時，作者也能夠獲得一定比例的版稅。我們的解決方案可以讓創作者和 NFT 持有者之間達到雙贏，在 TON 創造一個更好的 NFT 生態系統。
+
+在目前的 POC 版本，我們對於 QuotaShop 的實做是讓 Author 可以自行定價。未來，我們將會讓社群融入這個 QuotaShop 的定價機制，利用激勵機制還有市場的力量來決定價格，讓 QuotaShop 的定價更加合理。
 
 ## Resources
 
