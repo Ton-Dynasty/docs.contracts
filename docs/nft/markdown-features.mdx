@@ -30,7 +30,7 @@ sidebar_position: 3
 message SetUpAuction {
     nftAddress: Address;            // NFT address to be auctioned
     reservePrice: Int as coins;     // minimum bid price to start the auction timer
-    N: Int as coins;      // price at which the NFT can be directly bought
+    buyNowPrice: Int as coins;      // price at which the NFT can be directly bought
     auctionPeriod: Int as uint256;  // time when the auction ends after it starts
     beneficiary: Address?;           // the address of the beneficiary
 }
