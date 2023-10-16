@@ -103,12 +103,8 @@ const config = {
             items: [
               {
                 label: "Telegram",
-                href: "https://stackoverflow.com/questions/tagged/docusaurus",
-              },
-              {
-                label: "Discord",
-                href: "https://discordapp.com/invite/docusaurus",
-              },
+                href: "https://t.me/ton_dynasty_community",
+              }
             ],
           },
           {
