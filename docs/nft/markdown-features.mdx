@@ -14,7 +14,9 @@ Leveraging the advantages of TON parent-child contracts, NFT holders create a de
 - This smart contract interface can be used for NFT auctions (or just buying/selling) in a decentralized and flexible manner.
 - Sellers and bidders are able to create customized auctions and bids, enabling a comprehensive NFT auction/selling mechanism.
 
-## Seller Actions### Auction Customization- `NFTAddress`: The address of the NFT being auctioned.
+## Seller Actions
+
+### Auction Customization- `NFTAddress`: The address of the NFT being auctioned.
 - `reservePrice`: The auction begins when this price is reached, and users have a specific period of time to make subsequent higher bids. If `buyNowPrice` is also set, the reserve price cannot be higher than the `buyNowPrice`.
 - `buyNowPrice`: The auction automatically ends when a buyer reaches this price.
 - `auctionEnd`: The deadline for this NFT auction bidding.
@@ -35,7 +37,7 @@ message SetUpAuction {
 ## Bidder Actions 
 
 ### Auction Participation
-- `bidVale`: If there is already a bid, bidders must bid a higher amount by the bid increase percentage. But if this is already satisfied, bidders don't need to bid higher than the seller's set reserve price (in this case, the auction will not start). Therefore, if there are no bids on the auction, bidders can specify any amount.
+- `bidValue`: If there is already a bid, bidders must bid a higher amount by the bid increase percentage. But if this is already satisfied, bidders don't need to bid higher than the seller's set reserve price (in this case, the auction will not start). Therefore, if there are no bids on the auction, bidders can specify any amount.
 - Users can also make custom bids, specifying an NFT recipient, and if their bid is successful, the NFT will be transferred to that recipient.
 
 ### Direct Purchase
@@ -53,7 +55,7 @@ Sellers can:
 Bidders can:
 
 - Anyone can settle the auction and distribute the bids and NFT to the respective seller and recipient once the auction bid period has passed (the reserve bid has been met).
-- When a bidder's `bidVale` is surpassed by a new bidder's `bidVale`, the previous bid's `bidVale` is returned to the bidder, and the new highest bid price and bidder are updated.
+- When a bidder's `bidValue` is surpassed by a new bidder's `bidValue`, the previous bid's `bidValue` is returned to the bidder, and the new highest bid price and bidder are updated.
 - The seller of the NFT cannot bid on their own NFT auction.
 ## Let's TON it up!!!
 
