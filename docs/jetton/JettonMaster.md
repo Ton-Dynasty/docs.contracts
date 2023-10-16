@@ -8,10 +8,9 @@ This Jetton Master smart contract provides a framework for Jetton Master that co
 
 ## Overview
 
-在 TEP-0074 中定義了 Jetton 的標準，其中每種 Jetton 都有對應的 Jetton Master 合約，Jetton Master 會儲存 Jetton 的基本資訊，包含總供給量、metadata 的連結、metadata 本身等等，並且用於鑄造 Jetton。
+In TEP-0074, each Jetton has a corresponding Jetton Master contract, which stores the basic information of the Jetton, including the total supply, the link to the metadata, the metadata itself, etc., and is used to mint the Jetton.
 
-如果需要拿到整個 Jetton 的資訊，可以透過 Jetton Master 的 `get_jetton_data()` 來取得。
-`get_jetton_data()` 會回傳一個 `JettonData`，裡面包含了 Jetton 的基本資訊，大致上如下：
+If you need to get the information of the entire Jetton, you can get it through the `get_jetton_data()` of the Jetton Master.
 
 ```typescript
 struct JettonData {
@@ -46,7 +45,7 @@ get fun get_jetton_data(): JettonData {
 
 ### Message Types
 
-針對 Jetton Master，我們定義了 JettonMint 這個 Message Type，用於鑄造 Jetton。
+For Jetton Master, we define the `JettonMint` message type for minting Jetton.
 
 #### `JettonMint`:
 
@@ -72,11 +71,11 @@ message JettonMint {
 
 ### Must Override Functions
 
-Jetton Master 定義了一個必須在子合約中實作的 function：
+Jetton Master defines the following **MUST** override functions:
 
 #### `calculate_jetton_wallet_init(owner_address: Address)`:
 
-利用 Jetton Wallet 的 **owner address** 計算 Jetton Wallet 的 StateInit。
+Calculate Jetton Wallet's StateInit by Jetton Wallet's **owner address**.
 
 ```typescript
 // @dev  calculate_jetton_wallet_init retrieve init code of a jetton wallet
@@ -86,11 +85,11 @@ abstract inline fun calculate_jetton_wallet_init(owner_address: Address): StateI
 
 ### Optional Override Functions
 
-Jetton Master 定義了以下幾個 Optional Override Functions：
+Jetton Master defines the following **Optional** override functions:
 
 #### `_mint_validate(ctx: Context, msg: JettonMint)`:
 
-用於檢查 mint request 是否合法，例如檢查 mint request 的發送者是否為 Jetton Master 的擁有者、Jetton 是否可以被 mint 等等。
+Check if the mint request is valid. For example, check if the sender of the mint request is the owner of the Jetton Master, and if the Jetton can be minted.
 
 ```typescript
 // @dev  _mint_validate conduct some custom validating before mint
@@ -102,7 +101,7 @@ virtual inline fun _mint_validate(ctx: Context, msg: JettonMint) {
 
 #### `_mint(ctx: Context, msg: JettonMint)`:
 
-用於 mint jettons，會傳送 [Jetton Wallet](JettonWallet) 的 init code、init data 以及 mint 的資訊給 Jetton Wallet。
+Mint Jetton and send [Jetton Wallet](JettonWallet)'s init code, init data and mint information to Jetton Wallet.
 
 ```typescript
 // @dev  _mint mint jettons
@@ -130,7 +129,7 @@ virtual inline fun _mint(ctx: Context, msg: JettonMint) {
 
 #### `_burn_notification_validate(ctx: Context, msg: JettonBurnNotification)`:
 
-用於檢查 burn request 是否合法，例如檢查 burn request 的發送者是否為 Jetton Wallet 等等。
+Check if the burn request is valid. For example, check if the sender of the burn request is a Jetton Wallet.
 
 ```typescript
 // @dev  _burn_notification_validate perform some custom validation after receiving JettonBurnNotification sent from Jetton wallet
@@ -144,7 +143,7 @@ virtual inline fun _burn_notification_validate(ctx: Context, msg: JettonBurnNoti
 
 ### Basic Usage
 
-要使用我們的 Jetton Master Trait，首先需要先實作一個 Jetton Master 合約以及一個 [Jetton Wallet 合約](JettonWallet)，並且實作 `calculate_jetton_wallet_init(owner_address: Address)` 等等 must override function 以及 init function，例如：
+To use our Jetton Master Trait, you need to implement a Jetton Master contract and a [Jetton Wallet contract](JettonWallet), and implement `calculate_jetton_wallet_init(owner_address: Address)` and other must override functions and init function, for example:
 
 ```typescript
 import "@stdlib/deploy";
@@ -184,7 +183,7 @@ contract ExampleJettonMaster with JettonMaster, Deployable {
 
 ### Advanced Usage
 
-如果需要自訂 Jetton Master 的行為，可以 override Jetton Master 的 optional override function 以及新增各種 function，例如我們想要在 mint Jetton 時檢查 Jetton 是否可以被 mint，可以 override `_mint_validate(ctx: Context, msg: JettonMint)`，或是我們想要讓 User 可以直接傳送 "Mint:1" 給 Jetton Master 來 mint Jetton，可以新增一個 `receive("Mint:1")` 的 function，例如：
+If you need to customize the behavior of Jetton Master, you can override the optional override function of Jetton Master and add various functions. For example, if we want to check if the Jetton can be minted when minting Jetton, we can override `_mint_validate(ctx: Context, msg: JettonMint)`, or if we want to let the User send "Mint:1" directly to the Jetton Master to mint Jetton, we can add a `receive("Mint:1")` function, for example:
 
 ```typescript
 receive("Mint:1") {
