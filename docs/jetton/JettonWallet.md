@@ -126,11 +126,11 @@ message(0x7bdd97de) JettonBurnNotification {
 
 ### Must Override Functions
 
-Jetton Wallet defines a function that must be implemented in the child contract:
+Jetton Wallet defines the following **MUST** override functions:
 
 #### `calculate_jetton_wallet_init(owner_address: Address)`:
 
-Calculate Jetton Wallet's StateInit by owner address.
+Calculate Jetton Wallet's StateInit by Jetton Wallet's **owner address**.
 
 ```typescript
 // @dev  calculate_jetton_wallet_init will get init code of a jetton wallet by provided it's owner address
@@ -140,7 +140,7 @@ abstract inline fun calculate_jetton_wallet_init(owner_address: Address): StateI
 
 ### Optional Override Functions
 
-Jetton Wallet defines several Optional Override Functions:
+Jetton Wallet defines the following **Optional** override functions:
 
 #### `_internal_transfer_validate(ctx: Context, msg: JettonInternalTransfer)`:
 
