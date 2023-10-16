@@ -135,10 +135,12 @@ quota 解決方案是對於一個 NFT Item 引入一個 QuotaShop，QuotaShop �
 
 再來，如果你期望能夠出售 NFT 並且獲得最大化的收入，那麼我們提供了 **Auction** 這種解決方案，不必再依靠中介人，你可以直接在 TON 上自己開啟拍賣。
 
-拍賣分為兩種，兩種模式流程相同，在結束的時候會將 NFT 轉移給最高出價者，並且將得標的一部分 TON 轉移給 **Author** 作為版稅。如果是買斷 NFT 碎片，收益則由持有碎片的人依照比例分配。
+拍賣分為兩種：
 
 1. 想要出售完整 NFT 的拍賣
 2. 想要買斷 NFT 碎片的拍賣
+
+兩種模式流程相同，在結束的時候會將 NFT 轉移給最高出價者，並且將得標的一部分 TON 轉移給 **Author拍ㄇㄞ作為版稅。如果是買斷 NFT 碎片，收益則由持有碎片的人依照比例分配。
 
 #### Steps
 
@@ -147,7 +149,7 @@ quota 解決方案是對於一個 NFT Item 引入一個 QuotaShop，QuotaShop �
 3. 競標結束後，**Auction Contract** 會將 NFT 轉移給最高出價者，並且將得標的一部分 TON 轉移給 **Author** 作為版稅
 
 :::tip
-如果是買斷 NFT 碎片，我們會將收益存入 `NFT Fraction (Jetton Master)`，持有碎片的人可以隨時使用 `Withdraw` 將 TON 依照提領出來。此時 `NFT Item` 的 `nullifier` 會加 1 ，讓下次碎片化的 `NFT Fraction` 會有不同的 `nullifier`。
+如果是買斷 NFT 碎片，我們會將收益存入 `NFT Fraction (Jetton Master)`，持有碎片的人可以隨時使用 `Withdraw` 將 TON 依照碎片持有比例提領出來。此時 `NFT Item` 的 `nullifier` 會加 1 ，讓下次碎片化的 `NFT Fraction` 會有不同的 `nullifier`。
 
 這樣做的好處是不用一一發送 TON 給每個持有碎片的人，而是讓他們自己來提領，這樣一來可以節省很多 Gas。
 :::
