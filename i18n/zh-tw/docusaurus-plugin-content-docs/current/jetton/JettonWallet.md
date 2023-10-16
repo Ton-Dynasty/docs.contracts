@@ -144,7 +144,7 @@ Jetton Wallet 定義了以下幾個 Optional Override Functions：
 
 #### `_internal_transfer_validate(ctx: Context, msg: JettonInternalTransfer)`:
 
-用於檢查 internal transfer message 是否合法，例如檢查 sender 是否為 Jetton Master 或 Jetton Wallet。
+檢查 internal transfer message 是否合法，例如檢查 sender 是否為 Jetton Master 或 Jetton Wallet。
 
 ```typescript
 // @dev  _internal_tranfer_validate will validate internal transfer message, usually it will check that sender is a jetton master or jetton wallet

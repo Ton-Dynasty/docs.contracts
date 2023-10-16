@@ -8,11 +8,10 @@ This Jetton Wallet smart contract provides a framework for Jetton MastWalleter t
 
 ## Overview
 
-在 TEP-0074 中定義了 Jetton 的標準，其中每種 Jetton 都有對應的 Jetton Wallet 合約，每個 user 對不同的 Jetton 都會有一個對應的 Jetton Wallet，Jetton Wallet 負責儲存 Jetton 的數量，並且提供一些基本的功能，例如轉帳、鑄造、銷毀等等。
+In TEP-0074, the standard of Jetton is defined. Each Jetton has corresponding Jetton Wallet contract. Each user will have a corresponding Jetton Wallet for different Jettons. Jetton Wallet is responsible for storing the number of Jettons and providing some basic functions, such as transfer, mint, burn, etc.
 
-如果需要拿到整個 Jetton Wallet 的資訊，可以透過 Jetton Wallet 的 `get_wallet_data()` 來取得。
-
-`get_wallet_data()` 會回傳一個 `WalletData`，裡面包含了 Jetton Wallet 的基本資訊，大致上如下：
+If you need to get the information of the entire Jetton Wallet, you can get it through `get_wallet_data()`.
+`get_wallet_data()` will return a `WalletData`, which contains the basic information of the Jetton Wallet, roughly as follows:
 
 ```typescript
 struct WalletData {
@@ -37,12 +36,11 @@ get fun get_wallet_data(): WalletData{
 
 ### Message Types
 
-針對 Jetton Wallet，我們依照 TEP-0074 實作了數個 Message Type，用於轉帳、銷毀 Jetton、發送通知。
+For Jetton Wallet, we have implemented several Message Types according to TEP-0074, which are used for transfer, burn Jetton, send notification, etc.
 
 #### `JettonTransfer`:
 
-用於 Jetton Wallet 的 Owner 將 Jetton 轉移給其他人。
-使用方式為 Owner 傳送一個 `JettonTransfer` 給 Jetton Wallet，Jetton Wallet 會將 Jetton 轉移給 `destination` 擁有的 Jetton Wallet，並且將剩餘的 TON 帶回 `response_destination`。
+If you want to transfer Jetton, you can use `JettonTransfer` to send to Jetton Wallet. Jetton Wallet will transfer Jetton to the Jetton Wallet owned by `destination`, and bring back the remaining TON to `response_destination`.
 
 ```typescript
 message(0x0f8a7ea5) JettonTransfer {
@@ -58,7 +56,7 @@ message(0x0f8a7ea5) JettonTransfer {
 
 #### `JettonTransferNotification`:
 
-用於 Jetton Wallet 的 Owner 將 Jetton 轉移給其他人後，通知 Jetton 的新 Owner。
+After Jetton Wallet transfer Jetton to others, it will send a `JettonTransferNotification` to the new owner of the Jetton.
 
 ```typescript
 message(0x7362d09c) JettonTransferNotification {
@@ -71,7 +69,7 @@ message(0x7362d09c) JettonTransferNotification {
 
 #### `JettonBurn`:
 
-用於 Jetton Wallet 的 Owner 銷毀自己 Jetton Wallet 中的 Jetton。
+Jetton Wallet will burn Jetton in its own contract.
 
 ```typescript
 message(0x595f07bc) JettonBurn {
@@ -84,7 +82,7 @@ message(0x595f07bc) JettonBurn {
 
 #### `JettonExcesses`:
 
-用於 Jetton Wallet 的 Owner 將 Jetton 轉移給其他人後，將剩餘的 TON 帶回。
+After Jetton Wallet transfer Jetton to others, if there is remaining TON, it will send a `JettonExcesses` to the sender of the Jetton.
 
 ```typescript
 message(0xd53276db) JettonExcesses {
@@ -94,12 +92,13 @@ message(0xd53276db) JettonExcesses {
 
 #### `JettonInternalTransfer`:
 
-用於 Jetton Wallet 與其他 Jetton Wallet 或與 Jetton Master 之間的轉帳。
-使用方式有兩種：
+The transfer of Jetton Wallet to other Jetton Wallet or Jetton Master.
 
-1. Jetton Wallet 與其他 Jetton Wallet 之間的轉帳：Jetton Wallet 傳送一個 `JettonInternalTransfer` 給 Jetton Wallet，Jetton Wallet 會將 Jetton 轉移給 `destination` 擁有的 Jetton Wallet，並且將剩餘的 TON 帶回 `response_destination`。
+For example:
 
-2. Jetton Master 與 Jetton Wallet 之間的轉帳：Jetton Master Mint Jetton 給 Jetton Wallet 時，會傳送一個 `JettonInternalTransfer` 給 Jetton Wallet。
+1. Transfer between Jetton Wallet and other Jetton Wallet: Jetton Wallet sends a `JettonInternalTransfer` to Jetton Wallet, and Jetton Wallet will transfer Jetton to the Jetton Wallet owned by `destination`, and bring back the remaining TON to `response_destination`.
+
+2. Transfer between Jetton Master and Jetton Wallet: When Jetton Master Mint Jetton to Jetton Wallet, it will send a `JettonInternalTransfer` to Jetton Wallet.
 
 ```typescript
 message(0x178d4519) JettonInternalTransfer {
@@ -114,7 +113,7 @@ message(0x178d4519) JettonInternalTransfer {
 
 #### `JettonBurnNotification`:
 
-用於 Jetton Wallet 銷毀 Jetton 後，通知 Jetton Master。
+After Jetton Wallet burn Jetton, it will send a `JettonBurnNotification` to the Jetton Master.
 
 ```typescript
 message(0x7bdd97de) JettonBurnNotification {
@@ -127,11 +126,11 @@ message(0x7bdd97de) JettonBurnNotification {
 
 ### Must Override Functions
 
-Jetton Wallet 定義了一個必須在子合約中實作的 function：
+Jetton Wallet defines a function that must be implemented in the child contract:
 
 #### `calculate_jetton_wallet_init(owner_address: Address)`:
 
-利用 Jetton Wallet 的 **owner address** 計算 Jetton Wallet 的 StateInit。
+Calculate Jetton Wallet's StateInit by owner address.
 
 ```typescript
 // @dev  calculate_jetton_wallet_init will get init code of a jetton wallet by provided it's owner address
@@ -141,11 +140,11 @@ abstract inline fun calculate_jetton_wallet_init(owner_address: Address): StateI
 
 ### Optional Override Functions
 
-Jetton Wallet 定義了以下幾個 Optional Override Functions：
+Jetton Wallet defines several Optional Override Functions:
 
 #### `_internal_transfer_validate(ctx: Context, msg: JettonInternalTransfer)`:
 
-用於檢查 internal transfer message 是否合法，例如檢查 sender 是否為 Jetton Master 或 Jetton Wallet。
+Check whether the internal transfer message is legal, for example, check whether the sender is Jetton Master or Jetton Wallet.
 
 ```typescript
 // @dev  _internal_tranfer_validate will validate internal transfer message, usually it will check that sender is a jetton master or jetton wallet
@@ -160,7 +159,7 @@ virtual inline fun _internal_transfer_validate(ctx: Context, msg: JettonInternal
 
 #### `_internal_transfer_estimate_remain_value(ctx: Context, msg: JettonInternalTransfer)`:
 
-用於估計轉帳後剩餘的 TON 數量，會扣除 storage fee、forward fee 以及 gas consumption。
+Estimate the remaining TON after the transfer, which will deduct the storage fee, forward fee and gas consumption.
 
 ```typescript
 // @dev  _internal_transfer_estimate_remain_value will estimate remain value after deducting storage fee, forward fee and gas consumption
@@ -177,7 +176,7 @@ virtual inline fun _internal_transfer_estimate_remain_value(ctx: Context, msg: J
 
 #### `_internal_transfer_notification(ctx: Context, msg: JettonInternalTransfer)`:
 
-用於轉帳後，通知 Jetton Wallet 的 Owner。
+After transfer, notify the owner of the Jetton Wallet.
 
 ```typescript
 // @dev  _internal_transfer_notification will send notification to the owner of the jetton wallet
@@ -201,7 +200,7 @@ virtual inline fun _internal_transfer_notification(ctx: Context, msg: JettonInte
 
 #### `_internal_transfer_excesses(ctx: Context, msg: JettonInternalTransfer, remain: Int)`:
 
-用於轉帳後，將剩餘的 TON 送回。
+After transfer, send the remaining TON back.
 
 ```typescript
 // @dev  _internal_transfer_excesses will send excesses message back after transfer action completed
@@ -222,7 +221,7 @@ virtual inline fun _internal_transfer_excesses(ctx: Context, msg: JettonInternal
 
 #### `_burn_validate(ctx: Context, msg: JettonBurn)`:
 
-用於檢查 burn request 是否合法，例如檢查 burn request 的發送者是否為 Jetton Wallet 的 Owner。
+Check whether the burn request is legal, for example, check whether the sender is Jetton Wallet's Owner.
 
 ```typescript
 // @dev  _burn_validate will conduct custom checking when receiving JettonBurn message
@@ -233,7 +232,7 @@ virtual inline fun _burn_validate(ctx: Context, msg: JettonBurn) {
 
 #### `_burn_tokens(ctx: Context, msg: JettonBurn)`:
 
-用於銷毀 Jetton，並且通知 Jetton Master。
+Burn Jetton and notify Jetton Master.
 
 ```typescript
 // @dev  _burn_tokens will burn tokens and send JettonBurnNotification back to the jetton master
@@ -256,7 +255,7 @@ virtual inline fun _burn_tokens(ctx: Context, msg: JettonBurn) {
 
 #### `_transfer_validate(ctx: Context, msg: JettonTransfer)`:
 
-用於檢查 transfer request 是否合法，例如檢查 transfer request 的發送者是否為 Jetton Wallet 的 Owner。
+Check whether the transfer request is legal, for example, check whether the sender is Jetton Wallet's Owner.
 
 ```typescript
 // @dev  _transfer_validate will conduct custom checking when receiving JettonTransfer message
@@ -268,7 +267,7 @@ virtual inline fun _transfer_validate(ctx: Context, msg: JettonTransfer) {
 
 #### `_transfer_estimate_remain_value(ctx: Context, msg: JettonTransfer)`:
 
-用於估計轉帳後剩餘的 TON 數量，會扣除 storage fee、forward fee 以及 gas consumption。
+Estimate the remaining TON after the transfer, which will deduct the storage fee, forward fee and gas consumption.
 
 ```typescript
 // @dev  _transfer_estimate_remain_value will estimate remain value after deducting storage fee, forward fee and gas consumption
@@ -283,7 +282,7 @@ virtual inline fun _transfer_estimate_remain_value(ctx: Context, msg: JettonTran
 
 #### `_transfer_jetton(ctx: Context, msg: JettonTransfer)`:
 
-用於轉帳 Jetton，如果對方還沒有 Jetton Wallet，會先幫對方建立 Jetton Wallet。
+Transfer Jetton, if the destination doesn't have Jetton Wallet, it will create a Jetton Wallet for the destination.
 
 ```typescript
 // @dev  _transfer_jetton will transfer jettons to the jetton wallet of the destination address (owner of jetton wallet)
@@ -314,7 +313,7 @@ virtual inline fun _transfer_jetton(ctx: Context, msg: JettonTransfer) {
 
 ### Basic Usage
 
-要使用我們的 Jetton Wallet Trait，首先需要先實作一個 Jetton Wallet 以及一個 [Jetton Master](JettonMaster) 合約，並且實作 `calculate_jetton_wallet_init(owner_address: Address)` 等等 must override function 以及 init function，例如：
+To use our Jetton Wallet Trait, you need to implement a Jetton Wallet and a [Jetton Master](JettonMaster) contract, and implement `calculate_jetton_wallet_init(owner_address: Address)` and other must override functions and init function, for example:
 
 ```typescript
 import "@stdlib/deploy";
@@ -354,7 +353,7 @@ contract ExampleJettonMaster with JettonMaster, Deployable {
 
 ### Advanced Usage
 
-如果需要實作一個自己的 Jetton Wallet，可以 Override Jetton Wallet 的 Optional Override Functions，例如想要讓任何人都可以銷毀自己 Jetton Wallet 中的 Jetton，可以實作 `_burn_validate`：
+If you want to implement your own Jetton Wallet, you can Override Jetton Wallet's Optional Override Functions. For example, if you want anyone to be able to burn Jetton in your Jetton Wallet, you can implement `_burn_validate`:
 
 ```typescript
 override inline fun _burn_validate(ctx: Context, msg: JettonBurn) {
