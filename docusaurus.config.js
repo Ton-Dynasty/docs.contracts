@@ -6,7 +6,7 @@ const darkCodeTheme = require("prism-react-renderer/themes/dracula");
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
-  title: "TonDynastyDocs",
+  title: "TonDynasty Contracts",
   tagline: "Documents & Tutorial for TonDynasty contracts",
   favicon: "img/favicon.ico",
 
@@ -62,10 +62,10 @@ const config = {
       // Replace with your project's social card
       image: "img/docusaurus-social-card.jpg",
       navbar: {
-        title: "TonDynastyDocs",
+        title: "TonDynasty Contracts",
         logo: {
-          alt: "TonDynastyDocs Logo",
-          src: "img/logo.svg",
+          alt: "TonDynasty Contracts Logo",
+          src: "img/logo.png",
         },
         items: [
           {
@@ -104,7 +104,7 @@ const config = {
               {
                 label: "Telegram",
                 href: "https://t.me/ton_dynasty_community",
-              }
+              },
             ],
           },
           {
