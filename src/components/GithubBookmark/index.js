@@ -73,7 +73,7 @@ export default function GithubBookmark({ repoName, owner }) {
         {stars !== null && (
           <>
             <span style={{ marginRight: "0.5rem" }}>{stars}</span>
-            <FontAwesomeIcon icon={faStar} color="yellow" />
+            <FontAwesomeIcon icon={faStar} color="#E3B341" />
           </>
         )}
       </div>
