@@ -10,16 +10,11 @@ Implementing basic TON NFT auction functionality
 ![Architecture](./images/ton_auction_flow.jpg)
 Leveraging the advantages of TON parent-child contracts, NFT holders create a dedicated **NFT Auction Contract** through the **NFT Auction Market Contract** for auctioning.
 
-## How does the Auction functionality work?
-
+## Auction Mechanics
 - This smart contract interface can be used for NFT auctions (or just buying/selling) in a decentralized and flexible manner.
 - Sellers and bidders are able to create customized auctions and bids, enabling a comprehensive NFT auction/selling mechanism.
 
-## NFT sellers can perform the following actions to sell or auction their NFTs:
-
-### Create an auction for a single NFT and customize its auction by specifying the following:
-
-- `NFTAddress`: The address of the NFT being auctioned.
+## Seller Actions### Auction Customization- `NFTAddress`: The address of the NFT being auctioned.
 - `reservePrice`: The auction begins when this price is reached, and users have a specific period of time to make subsequent higher bids. If `buyNowPrice` is also set, the reserve price cannot be higher than the `buyNowPrice`.
 - `buyNowPrice`: The auction automatically ends when a buyer reaches this price.
 - `auctionEnd`: The deadline for this NFT auction bidding.
@@ -37,15 +32,13 @@ message SetUpAuction {
 }
 ```
 
-## Bidders can perform the following actions using the Auction contract:
+## Bidder Actions 
 
-### Customize the auction for a single NFT by specifying the following:
-
+### Auction Participation
 - `bidVale`: If there is already a bid, bidders must bid a higher amount by the bid increase percentage. But if this is already satisfied, bidders don't need to bid higher than the seller's set reserve price (in this case, the auction will not start). Therefore, if there are no bids on the auction, bidders can specify any amount.
 - Users can also make custom bids, specifying an NFT recipient, and if their bid is successful, the NFT will be transferred to that recipient.
 
-### Purchase an NFT by specifying the following during the sale:
-
+### Direct Purchase
 - In this case, buyers can bid an amount less than the buy-now price, which will not end the sale. Then, buyers must bid an amount higher by the default percentage than the previous lower bid. If the bidder specifies an amount equal to or higher than the buy-now price, the sale will end, and the NFT and purchase amount will be transferred.
 
 ## Additional functions available
@@ -85,7 +78,7 @@ trait NFTAuctionMarketStandard {
 
 Quickly implement your own Auction Contract by inheriting `NFTAuctionMarketStandard`, with the flexibility to rewrite default basic bidding variables.
 
-### Seller needs to first transfer NFT to Auction Market
+### Seller's Initial NFT Transfer
 
 ```typescript
 // @dev Processes the OwnershipAssigned message and updates auction mappings,
@@ -137,7 +130,7 @@ receive(msg: SetUpAuction) {
 }
 ```
 
-### After the Auction Market successfully establishes a dedicated NFT Auction Contract
+### Post-Auction Contract Establishment
 
 - Bidders can send a `Bid` message to the NFT Auction Contract, bidding on this NFT, where `message.value` is the bid price.
 - Upon receiving the `Bid` message, the Auction Market will first check if this auction is still active or not.
@@ -447,7 +440,8 @@ receive(msg: EndAuction) {
     }
 ```
 
-### NFT Auction Market Contract Internal Functions and Get Methods
+### Auction Market Contract Internal Functions && Get Methods
+
 Internal Function:
 ``` ts
 // @dev Parses payload to extract auction parameters and initializes the auction with provided data.
@@ -557,7 +551,9 @@ get fun get_is_auction_transfer_check(hashSellerNftAddress: Int): Int {
 }
 ```
 
-### NFT Auction Contract Internal Functions and Get Methods
+### Auction Contract Internal Functions && Get Methods
+
+
 Internal Function:
 ```ts
 // @dev Updates the auction bid period time based on the latest bid and the defined auction bid period

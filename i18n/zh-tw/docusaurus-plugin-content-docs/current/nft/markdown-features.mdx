@@ -9,15 +9,14 @@ sidebar_position: 3
 ## Architecture
 ![Architecture](./images/ton_auction_flow.jpg)
 透過TON子母合約的優勢，NFT持有者向**NFT Auction Market Contract**建立專屬的**NFT Auction Contract**進行拍賣。
-## How does the Auction functionality work?
 
+## Auction Mechanics
 - 這個智能合約 interface 可以在去中心化且靈活的情況下用於 NFT 的拍賣（或僅購買/出售）。
 - 賣家和競標者能夠創建自定義的拍賣和出價，從而實現全面的 NFT 拍賣/銷售機制。
 
-## NFT sellers can perform the following actions to sell or auction their NFTs:
+## Seller Actions
 
-### Create an auction for a single NFT and customize its auction by specifying the following:
-
+### Auction Customization
 - `NFTAddress`: 拍賣的 NFT 的地址。
 - `reservePrice`: 當達到此價格時，拍賣開始，用戶有一段特定的時間來進行後續的更高出價。如果也設置了 `buyNowPrice`，則最低價格不能大於 `buyNowPrice`。
 - `buyNowPrice`: 當買家達到此價格時，將自動結束拍賣。
@@ -36,15 +35,13 @@ message SetUpAuction {
 }
 ```
 
-## Bidders can perform the following actions using the Auction contract:
+## Bidder Actions 
 
-### Customize the auction for a single NFT by specifying the following:
-
+### Auction Participation
 - `bidVale`: 如果已經有人出價，競標者必須出更高的出價增加百分比金額。但如果這已經滿足，競標者無需出更高於賣家設定的最低價格的出價（在這種情況下，拍賣不會開始）。因此，如果在拍賣上沒有出價，競標者可以指定任何金額。
 - 用戶還可以進行自定義出價，並指定 NFT 接收者，如果他們的出價成功，則 NFT 將轉移給該接收者。
 
-### Purchase an NFT by specifying the following during the sale:
-
+### Direct Purchase
 - 在這種情況下，購買者可以以低於立即購買價格的金額進行出價，這不會結束銷售。然後，購買者必須以比之前的低出價金額高的默認百分比金額進行出價。如果競標者指定的金額等於或高於立即購買價格，則銷售將結束，並且 NFT 和購買金額將被轉移。
 
 ## Addtional functions avaliable
@@ -84,7 +81,7 @@ trait NFTAuctionMarketStandard {
 
 透過繼承 `NFTAuctionMarketStandard` 快速實作屬於自己的 Auction Contract，可以自行改寫預設基本競價變數。
 
-### Seller needs to first transfer NFT to Auction Market
+### Seller's Initial NFT Transfer
 
 ```typescript
 // @dev Processes the OwnershipAssigned message and updates auction mappings,
@@ -135,7 +132,7 @@ receive(msg: SetUpAuction) {
 }
 ```
 
-### After the Auction Market successfully establishes a dedicated NFT Auction Contract
+### Post-Auction Contract Establishment
 
 - 競標者可以向 NFT Auction Contract，發送 `Bid` message，向此 NFT 競標，`message.value` 即是投標價格。
 - Auction Market 收到 `Bid` 訊息後，會先檢查 this auction is still active or not.
@@ -444,7 +441,8 @@ receive(msg: EndAuction) {
     }
 ```
 
-### NFT Auction Market Contract Internal Functions and Get Methods
+### Auction Market Contract Internal Functions && Get Methods
+
 Internal Function:
 ``` ts
 // @dev Parses payload to extract auction parameters and initializes the auction with provided data.
@@ -552,7 +550,9 @@ get fun get_is_auction_transfer_check(hashSellerNftAddress: Int): Int {
 }
 ```
 
-### NFT Auction Contract Internal Functions and Get Methods
+### Auction Contract Internal Functions && Get Methods
+
+
 Internal Function:
 ```ts
 // @dev Updates the auction bid period time based on the latest bid and the defined auction bid period
