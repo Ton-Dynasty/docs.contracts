@@ -6,9 +6,22 @@ sidebar_position: 1
 
 This NFT Collection smart contract provides a framework for NFT collections that comply with the [TEP-0062 standard](https://github.com/ton-blockchain/TEPs/blob/master/text/0062-nft-standard.md).
 
+NFT in TON follows parent-child pattern. That is, each NFT item is a child contract of the NFT collection contract.
+![NFT Collection](./images/nft_parent_child.png)
+
 ## Overview
 
 In the TEP-0062 standard, each NFT collection is associated with an NFT Collection smart contract, which stores basic information about the collection, including the next item index, collection content, and owner address.
+
+## Message Flows
+
+![NFT Collection Message Flows](./images/nft_message_flow.png)
+
+Specifically, the `Transfer` flow is as follows:
+
+1. When NFT Item received a `Transfer` message, it will set the current owner to the `newOwner` in payload of `Transfer` message. 
+2. Then, an OwnershipAssigned event will send to NewOwner as a notification.
+3. Last, if there are remaining funds, the NFT Item will send `Excesses` message to previous owner, attaching with the remaining funds.
 
 ### CollectionData Structure
 
