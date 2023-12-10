@@ -46,9 +46,9 @@ Division in fixed point arithmetic follows a logic similar to multiplication, bu
 
 First, like in multiplication, we convert our numbers into fixed point format using the scaling factor $2^{64}$. So, $2$ becomes $2 \times 2^{64}$ and $7$ becomes $7 \times 2^{64}$. These numbers are now ready for arithmetic operations in fixed point format.
 
-When performing division in fixed point arithmetic, it's important to maintain the scale of the result consistent with the scale of the inputs. To divide $2$ by $7$ in fixed point format, we calculate $(2 \times 2^{64}) / (7 \times 2^{64})$. Here, the scaling factors in the numerator and denominator cancel each other out. This leaves us with the division of the original numbers, which is $2 / 7 = 0$.
+When performing division in fixed point arithmetic, it's important to maintain the scale of the result consistent with the scale of the inputs. To divide $2$ by $7$ in fixed point format, we calculate $(2 \times 2^{64}) / (7 \times 2^{64})$. Here, the scaling factors in the numerator and denominator cancel each other out.
 
-However, this direct division would lead to a loss of precision since $floor(2 / 7) = 0$. To address this, we can multiply the numerator by an additional scaling factor before performing the division, and divide it at the end of computation. This means we calculate $((2 \times 2^{64}) \times 2^{64}) / (7 \times 2^{64}) / 2^{64}$. Now, the result of this division will align with the scale of our inputs.
+However, this direct division would lead to a loss of precision since $floor(2 / 7) = 0$. To address this, we can multiply the numerator by an additional scaling factor before performing the division, and divide it at the end of computation. This means we calculate $((2 \times 2^{64}) \times 2^{64}) / (7 \times 2^{64})$. Now, the result of this division will align with the scale of our inputs.
 
 In Tact Language, this division process can be implemented as follows:
 
